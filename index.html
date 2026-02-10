@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCL League Phase Simulator (Fixed Matchday Logic)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050b24;
+            color: white;
+        }
+
+        .ucl-gradient {
+            background: linear-gradient(135deg, #0a1435 0%, #050b24 50%, #1e3a8a 100%);
+        }
+
+        .glass-card {
+            background: rgba(10, 20, 53, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #1e3a8a;
+            border-radius: 10px;
+        }
+
+        .tab-active {
+            border-bottom: 2px solid #3b82f6;
+            color: #3b82f6;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="ucl-gradient min-h-screen pb-12">
+
+    <div class="relative overflow-hidden pt-12 pb-12 px-4">
+        <div class="max-w-7xl mx-auto relative z-10 text-center">
+            <i class="fas fa-trophy text-6xl text-cyan-400 mb-6 drop-shadow-[0_0_15px_rgba(0,255,255,0.5)]"></i>
+            <h1 class="text-4xl md:text-5xl font-black italic tracking-tighter mb-2">LEAGUE PHASE SIMULATOR</h1>
+            <p class="text-blue-300 font-bold uppercase tracking-[0.2em] text-xs">Fixed Matchday Fixtures & Standings</p>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Sidebar -->
+        <aside class="lg:col-span-3 space-y-6">
+            <div class="glass-card p-6 rounded-3xl sticky top-8 shadow-2xl">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-bold text-blue-400">အသင်းများထည့်ရန်</h2>
+                    <span id="teamCount" class="bg-blue-900 text-blue-300 px-2 py-0.5 rounded text-xs">0</span>
+                </div>
+                
+                <div class="space-y-4 mb-6">
+                    <input id="teamNameInput" type="text" placeholder="အသင်းအမည်..." 
+                        class="w-full bg-[#121d46] border border-blue-900/50 rounded-xl p-3 text-sm text-white outline-none focus:border-blue-400">
+                    
+                    <button onclick="handleAddTeam()" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-bold transition-all">
+                        အသင်းထည့်မည်
+                    </button>
+                </div>
+
+                <div id="teamList" class="max-h-[350px] overflow-y-auto space-y-1 pr-1 custom-scrollbar mb-6">
+                    <!-- Teams here -->
+                </div>
+
+                <button id="drawBtn" onclick="startDraw()" class="w-full py-4 rounded-xl font-black text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:brightness-110 shadow-xl">
+                    GENERATE DRAW
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <section class="lg:col-span-9 space-y-6">
+            <!-- Tabs -->
+            <div class="flex gap-8 border-b border-blue-900/30 mb-4 px-2">
+                <button onclick="switchTab('fixtures')" id="tab-fixtures" class="pb-3 text-sm font-bold uppercase tracking-wider tab-active transition-all">Fixtures & Results</button>
+                <button onclick="switchTab('standings')" id="tab-standings" class="pb-3 text-sm font-bold uppercase tracking-wider text-slate-500 transition-all">Standings</button>
+            </div>
+
+            <!-- Fixtures Tab -->
+            <div id="content-fixtures" class="space-y-6">
+                <div id="emptyState" class="h-64 flex flex-col items-center justify-center bg-[#0a1435]/30 border-2 border-dashed border-blue-900/30 rounded-3xl text-slate-500">
+                    <i class="fas fa-random text-4xl mb-4 opacity-20"></i>
+                    <p>အနည်းဆုံး အသင်း ၂ သင်း (စုံဂဏန်း) ထည့်ပြီး မဲခွဲပါ</p>
+                </div>
+
+                <div id="matchdayControls" class="hidden flex items-center justify-between bg-blue-900/20 p-4 rounded-2xl border border-blue-500/10">
+                    <button onclick="changeMatchday(-1)" class="p-2 hover:bg-white/10 rounded-full"><i class="fas fa-chevron-left"></i></button>
+                    <div class="text-center">
+                        <span class="text-xs text-blue-400 font-bold uppercase">Matchday</span>
+                        <h2 id="currentMDDisplay" class="text-2xl font-black">1 / 8</h2>
+                    </div>
+                    <button onclick="changeMatchday(1)" class="p-2 hover:bg-white/10 rounded-full"><i class="fas fa-chevron-right"></i></button>
+                </div>
+
+                <div id="fixturesList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Fixtures injected here -->
+                </div>
+            </div>
+
+            <!-- Standings Tab -->
+            <div id="content-standings" class="hidden">
+                <div class="glass-card rounded-3xl overflow-hidden overflow-x-auto shadow-2xl border-blue-500/10">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-blue-900/40 text-blue-300 text-[10px] uppercase font-black">
+                            <tr>
+                                <th class="px-4 py-4 w-12 text-center">Pos</th>
+                                <th class="px-4 py-4">Club</th>
+                                <th class="px-4 py-4 text-center">P</th>
+                                <th class="px-4 py-4 text-center">W</th>
+                                <th class="px-4 py-4 text-center">D</th>
+                                <th class="px-4 py-4 text-center">L</th>
+                                <th class="px-4 py-4 text-center">GD</th>
+                                <th class="px-4 py-4 text-center text-white">Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody id="standingsBody">
+                            <!-- Standings injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let teams = [
+            'Real Madrid', 'Man City', 'Bayern Munich', 'Liverpool', 'Inter Milan', 
+            'PSG', 'Barcelona', 'Leipzig', 'Dortmund', 'Bayer Leverkusen', 
+            'Atletico Madrid', 'Atalanta', 'Juventus', 'Benfica', 'Arsenal', 
+            'Club Brugge', 'Shakhtar', 'AC Milan', 'Feyenoord', 'Sporting CP', 
+            'PSV', 'Celtic', 'Lille', 'Young Boys', 'Red Star', 'Salzburg', 
+            'Dinamo Zagreb', 'Slovan Bratislava', 'Monaco', 'Sparta Praha', 
+            'Aston Villa', 'Bologna', 'Girona', 'Stuttgart', 'Sturm Graz', 'Brest'
+        ].map((name, id) => ({ id, name }));
+        
+        let fixtures = [];
+        let currentMatchday = 1;
+
+        window.onload = () => renderTeams();
+
+        function switchTab(tab) {
+            document.getElementById('content-fixtures').classList.toggle('hidden', tab !== 'fixtures');
+            document.getElementById('content-standings').classList.toggle('hidden', tab !== 'standings');
+            document.getElementById('tab-fixtures').classList.toggle('tab-active', tab === 'fixtures');
+            document.getElementById('tab-standings').classList.toggle('tab-active', tab === 'standings');
+            if(tab === 'standings') updateStandings();
+        }
+
+        function handleAddTeam() {
+            const name = document.getElementById('teamNameInput').value;
+            if(!name) return;
+            teams.push({ id: Date.now(), name });
+            document.getElementById('teamNameInput').value = '';
+            renderTeams();
+        }
+
+        function removeTeam(id) {
+            teams = teams.filter(t => t.id !== id);
+            renderTeams();
+        }
+
+        function renderTeams() {
+            document.getElementById('teamCount').innerText = teams.length;
+            document.getElementById('teamList').innerHTML = teams.map(t => `
+                <div class="flex justify-between items-center bg-[#121d46]/50 p-2 rounded-lg border border-blue-900/20 mb-1">
+                    <span class="text-xs truncate flex-1 ml-2 font-medium">${t.name}</span>
+                    <button onclick="removeTeam(${t.id})" class="text-slate-500 hover:text-red-400 px-2">×</button>
+                </div>
+            `).join('');
+        }
+
+        function startDraw() {
+            if(teams.length < 2) return alert("အနည်းဆုံး အသင်း ၂ သင်းထည့်ပေးပါ");
+            
+            // Round Robin Algorithm (Circle Method)
+            let tempTeams = [...teams];
+            if (tempTeams.length % 2 !== 0) {
+                tempTeams.push({ id: -1, name: 'BYE' }); // Add ghost team for odd numbers
+            }
+            
+            const n = tempTeams.length;
+            const rounds = 8; // We only need 8 rounds as per request
+            fixtures = [];
+            
+            // Shuffle teams for randomness
+            tempTeams.sort(() => Math.random() - 0.5);
+
+            for (let r = 0; r < rounds; r++) {
+                for (let i = 0; i < n / 2; i++) {
+                    const home = tempTeams[i];
+                    const away = tempTeams[n - 1 - i];
+                    
+                    if (home.id !== -1 && away.id !== -1) {
+                        fixtures.push({
+                            matchId: `${r}-${home.id}-${away.id}`,
+                            home: home.name,
+                            away: away.name,
+                            homeScore: null,
+                            awayScore: null,
+                            matchday: r + 1
+                        });
+                    }
+                }
+                // Rotate teams (keeping first team fixed)
+                tempTeams.splice(1, 0, tempTeams.pop());
+            }
+
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('matchdayControls').classList.remove('hidden');
+            currentMatchday = 1;
+            renderFixtures();
+            switchTab('fixtures');
+        }
+
+        function changeMatchday(val) {
+            currentMatchday = Math.max(1, Math.min(8, currentMatchday + val));
+            renderFixtures();
+        }
+
+        function renderFixtures() {
+            document.getElementById('currentMDDisplay').innerText = `${currentMatchday} / 8`;
+            const mdFixtures = fixtures.filter(f => f.matchday === currentMatchday);
+            
+            if(mdFixtures.length === 0) {
+                 document.getElementById('fixturesList').innerHTML = `<div class="col-span-full text-center py-10 opacity-30 italic">No matches scheduled for this matchday.</div>`;
+                 return;
+            }
+
+            document.getElementById('fixturesList').innerHTML = mdFixtures.map(f => `
+                <div class="glass-card p-4 rounded-2xl flex items-center justify-between gap-2 border-blue-500/5">
+                    <div class="flex-1 text-right truncate font-semibold text-sm">${f.home}</div>
+                    <div class="flex items-center gap-1 bg-black/40 p-1 rounded-lg">
+                        <input type="number" value="${f.homeScore !== null ? f.homeScore : ''}" 
+                            onchange="updateScore('${f.matchId}', 'home', this.value)"
+                            class="w-8 bg-transparent text-center font-black text-blue-400 outline-none focus:bg-blue-500/20 rounded">
+                        <span class="text-slate-600">-</span>
+                        <input type="number" value="${f.awayScore !== null ? f.awayScore : ''}" 
+                            onchange="updateScore('${f.matchId}', 'away', this.value)"
+                            class="w-8 bg-transparent text-center font-black text-blue-400 outline-none focus:bg-blue-500/20 rounded">
+                    </div>
+                    <div class="flex-1 text-left truncate font-semibold text-sm">${f.away}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateScore(fid, side, val) {
+            const f = fixtures.find(x => x.matchId === fid);
+            if(f) {
+                if(side === 'home') f.homeScore = val === '' ? null : parseInt(val);
+                else f.awayScore = val === '' ? null : parseInt(val);
+            }
+        }
+
+        function updateStandings() {
+            const stats = {};
+            teams.forEach(t => {
+                stats[t.name] = { name: t.name, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0 };
+            });
+
+            fixtures.forEach(f => {
+                if(f.homeScore !== null && f.awayScore !== null) {
+                    const h = stats[f.home];
+                    const a = stats[f.away];
+                    if (h && a) {
+                        h.p++; a.p++;
+                        h.gf += f.homeScore; h.ga += f.awayScore;
+                        a.gf += f.awayScore; a.ga += f.homeScore;
+
+                        if(f.homeScore > f.awayScore) { h.w++; h.pts += 3; a.l++; }
+                        else if(f.homeScore < f.awayScore) { a.w++; a.pts += 3; h.l++; }
+                        else { h.d++; a.d++; h.pts += 1; a.pts += 1; }
+                    }
+                }
+            });
+
+            const sorted = Object.values(stats).sort((a, b) => {
+                if(b.pts !== a.pts) return b.pts - a.pts;
+                const gdA = a.gf - a.ga;
+                const gdB = b.gf - b.ga;
+                if(gdB !== gdA) return gdB - gdA;
+                return b.gf - a.gf;
+            });
+
+            document.getElementById('standingsBody').innerHTML = sorted.map((s, i) => `
+                <tr class="border-b border-blue-900/20 hover:bg-white/5 transition-colors">
+                    <td class="px-4 py-3 text-center">
+                        <span class="w-6 h-6 inline-flex items-center justify-center rounded-full text-[10px] font-black 
+                            ${i < 8 ? 'bg-green-600' : i < 24 ? 'bg-blue-600' : 'bg-slate-800'}">
+                            ${i + 1}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 font-bold">${s.name}</td>
+                    <td class="px-4 py-3 text-center text-slate-400">${s.p}</td>
+                    <td class="px-4 py-3 text-center">${s.w}</td>
+                    <td class="px-4 py-3 text-center">${s.d}</td>
+                    <td class="px-4 py-3 text-center">${s.l}</td>
+                    <td class="px-4 py-3 text-center font-mono">${s.gf - s.ga}</td>
+                    <td class="px-4 py-3 text-center font-black text-blue-400">${s.pts}</td>
+                </tr>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
