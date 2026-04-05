@@ -2,181 +2,172 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE ONE PRO LEAGUE - NEON</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>THE ONE PRO LEAGUE - CLASSIC MOBILE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
         
         :root {
             --neon-red: #ff003c;
-            --neon-green: #00ff88;
-            --neon-yellow: #ffcc00;
-            --neon-glow: rgba(255, 0, 60, 0.5);
+            --neon-glow: rgba(255, 0, 60, 0.6);
             --dark-bg: #050505;
+            --card-bg: rgba(18, 18, 18, 0.95);
         }
 
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: var(--dark-bg); 
-            color: #ffffff; 
-            overflow-x: hidden;
+            color: #ffffff;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #000; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--neon-red); box-shadow: 0 0 10px var(--neon-red); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: neonFade 0.5s ease-out; }
-        @keyframes neonFade { from { opacity: 0; filter: blur(5px); } to { opacity: 1; filter: blur(0); } }
-
-        .neon-border { border: 1px solid rgba(255, 0, 60, 0.2); transition: all 0.3s ease; }
-        .neon-border:hover { border-color: var(--neon-red); box-shadow: 0 0 15px var(--neon-glow); }
-
-        .dark-card { background: rgba(18, 18, 18, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
-
-        .red-gradient { background: linear-gradient(135deg, #ff003c 0%, #7e001e 100%); }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
         
-        .active-nav-btn { position: relative; color: white !important; }
-        .active-nav-btn::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 20%;
-            width: 60%;
-            height: 3px;
-            background: var(--neon-red);
-            box-shadow: 0 0 10px var(--neon-red), 0 0 20px var(--neon-red);
-            border-radius: 10px;
-            animation: barGlow 1.5s infinite alternate;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .round-btn {
-            font-weight: 900 !important;
-            letter-spacing: 0.1em;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .neon-text { text-shadow: 0 0 10px var(--neon-glow), 0 0 20px var(--neon-glow); }
+        .red-gradient { background: linear-gradient(135deg, #ff003c 0%, #9e0025 100%); }
+
+        /* Standing Table Styles */
+        .standing-table { font-size: 10px; width: 100%; border-collapse: separate; border-spacing: 0 4px; table-layout: fixed; }
+        .standing-table th { color: #666; font-size: 8px; text-transform: uppercase; padding: 8px 2px; text-align: center; }
+        .standing-table td { background: rgba(255,255,255,0.02); padding: 10px 2px; text-align: center; vertical-align: middle; }
+        
+        /* Column Widths */
+        .col-player { width: 35%; text-align: left !important; padding-left: 8px !important; }
+        .col-stat { width: 8%; }
+        .col-pts { width: 12%; }
+
+        .standing-table tr td:first-child { border-radius: 8px 0 0 8px; }
+        .standing-table tr td:last-child { border-radius: 0 8px 8px 0; }
+
+        .score-box {
+            background: #000;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: 900;
+            font-size: 13px;
+            border: 1px solid #222;
+            transition: all 0.3s ease;
         }
-        .round-btn.active {
-            background: var(--neon-red);
+
+        /* Result Colors */
+        .score-win { color: #22c55e !important; border-color: rgba(34, 197, 94, 0.4) !important; text-shadow: 0 0 8px rgba(34, 197, 94, 0.3); }
+        .score-loss { color: #ef4444 !important; border-color: rgba(239, 68, 68, 0.4) !important; }
+        .score-draw { color: #eab308 !important; border-color: rgba(234, 179, 8, 0.4) !important; }
+
+        .glass-header {
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .active-round-btn {
+            background: var(--neon-red) !important;
             color: white !important;
-            box-shadow: 0 0 25px var(--neon-glow);
-            transform: scale(1.05);
+            box-shadow: 0 0 10px var(--neon-glow);
         }
 
-        .loading-overlay { position: fixed; inset: 0; background: #000; z-index: 200; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-        
-        .neon-text-glow { text-shadow: 0 0 10px var(--neon-glow); }
-        .score-win { color: var(--neon-green); text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
-        .score-loss { color: var(--neon-red); text-shadow: 0 0 10px rgba(255, 0, 60, 0.5); }
-        .score-draw { color: var(--neon-yellow); text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); }
-        
-        input[type="number"] { background: #1a1a1a; border: 1px solid #333; color: white; transition: all 0.3s; }
-        input[type="number"]:focus { border-color: var(--neon-red); box-shadow: 0 0 10px var(--neon-glow); outline: none; }
+        .loading-overlay { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
 
-        /* Table Optimization */
-        .standing-table th, .standing-table td { padding: 12px 8px; text-align: center; }
-        .standing-table td:first-child, .standing-table th:first-child { text-align: left; padding-left: 20px; }
-        .standing-table td:last-child, .standing-table th:last-child { padding-right: 20px; }
+        /* Neon Header Styles */
+        .group-divider-text {
+            color: var(--neon-red);
+            text-shadow: 0 0 8px var(--neon-glow);
+            letter-spacing: 0.2em;
+        }
     </style>
 </head>
-<body class="custom-scrollbar">
+<body class="no-scrollbar pb-10">
 
-    <!-- Loading Screen -->
     <div id="loading-screen" class="loading-overlay">
-        <div class="relative w-20 h-20">
-            <div class="absolute inset-0 border-4 border-zinc-900 rounded-full"></div>
-            <div class="absolute inset-0 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-        <p class="mt-6 text-[10px] font-black uppercase tracking-[0.5em] text-red-600 animate-pulse">Neon System Online</p>
-    </div>
-
-    <!-- Admin Login Modal -->
-    <div id="admin-login-modal" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-black/90 backdrop-blur-md">
-        <div class="bg-zinc-950 border border-red-900/30 p-8 rounded-[2rem] w-full max-w-sm shadow-[0_0_50px_rgba(255,0,60,0.1)]">
-            <div class="text-center mb-8">
-                <div class="w-16 h-16 red-gradient rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_var(--neon-glow)]">
-                    <i class="fas fa-fingerprint text-white text-2xl"></i>
-                </div>
-                <h2 class="text-xl font-black text-white uppercase italic tracking-widest neon-text-glow">Admin Access</h2>
-            </div>
-            <div class="space-y-5">
-                <input type="password" id="adminPasswordInput" class="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-white text-center tracking-[0.8em] focus:border-red-600 outline-none transition-all" placeholder="••••••">
-                <div id="loginError" class="text-red-500 text-[9px] text-center font-bold hidden uppercase tracking-widest">Authentication Failed</div>
-                <div class="grid grid-cols-2 gap-3 pt-2">
-                    <button onclick="closeAdminLogin()" class="bg-zinc-900 text-zinc-500 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:text-white transition">Cancel</button>
-                    <button onclick="attemptLogin()" class="red-gradient text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg">Verify</button>
-                </div>
-            </div>
+        <div class="flex flex-col items-center">
+            <div class="w-10 h-10 border-2 border-zinc-900 border-t-red-600 rounded-full animate-spin"></div>
         </div>
     </div>
 
-    <nav class="nav-blur sticky top-0 z-50 px-6 py-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <div class="w-10 h-10 red-gradient rounded-xl flex items-center justify-center shadow-[0_0_15px_var(--neon-glow)] overflow-hidden">
-                    <img id="navLogo" src="https://via.placeholder.com/100?text=LOGO" alt="Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';">
-                    <i id="logoFallback" class="fas fa-bolt text-white hidden"></i>
+    <!-- Admin Login -->
+    <div id="admin-login-modal" class="fixed inset-0 z-[1000] flex items-center justify-center hidden bg-black/95 p-6">
+        <div class="bg-zinc-900 w-full max-w-xs rounded-[2rem] p-8 border border-white/5 shadow-2xl">
+            <h2 class="text-center font-black uppercase text-xs tracking-widest mb-6">Admin Verification</h2>
+            <input type="password" id="adminPasswordInput" class="w-full bg-black border border-zinc-800 rounded-xl p-4 text-center tracking-[1em] mb-4 outline-none focus:border-red-600" placeholder="••••">
+            <button onclick="attemptLogin()" class="w-full red-gradient rounded-xl p-4 font-black uppercase text-[10px]">Access Panel</button>
+            <button onclick="closeAdminLogin()" class="w-full mt-2 p-2 text-zinc-600 text-[9px] font-bold uppercase">Back</button>
+        </div>
+    </div>
+
+    <header class="glass-header sticky top-0 z-50 px-5 py-4">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 red-gradient rounded-lg flex items-center justify-center shadow-lg">
+                    <i class="fas fa-trophy text-white text-[10px]"></i>
                 </div>
-                <div class="hidden sm:block">
-                    <h1 class="text-xl font-black tracking-tighter uppercase italic leading-none">
-                        <span class="text-white">THE ONE</span> <span class="text-red-600 neon-text-glow">PRO LEAGUE</span>
-                    </h1>
-                    <p class="text-[8px] font-bold text-zinc-500 uppercase tracking-[0.4em] mt-1">Official Website</p>
+                <div>
+                    <h1 class="text-sm font-black italic uppercase leading-none tracking-tight">THE ONE <span class="text-red-600">PRO</span></h1>
+                    <p class="text-[7px] text-zinc-500 font-bold tracking-[0.2em] uppercase">Season 2024</p>
                 </div>
             </div>
-
-            <div class="flex items-center bg-zinc-950 rounded-2xl p-1 border border-zinc-800">
-                <button onclick="showTab('user-view')" id="btn-user" class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active-nav-btn">Public</button>
-                <button onclick="openAdminLogin()" id="btn-admin" class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-zinc-500 transition-all">Control</button>
+            <div class="flex bg-zinc-900 p-1 rounded-xl border border-zinc-800">
+                <button onclick="showTab('user-view')" id="btn-user" class="px-4 py-2 rounded-lg text-[9px] font-black uppercase bg-red-600 text-white">View</button>
+                <button onclick="openAdminLogin()" id="btn-admin" class="px-4 py-2 rounded-lg text-[9px] font-black uppercase text-zinc-500">Admin</button>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <main class="container mx-auto p-4 lg:p-10">
+    <main class="p-4">
         <!-- ADMIN PANEL -->
-        <section id="admin-panel" class="tab-content">
-            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-16">
-                <div class="xl:col-span-2 dark-card p-10 rounded-[2.5rem] neon-border">
-                    <h2 class="text-2xl font-black uppercase italic mb-8 flex items-center neon-text-glow">
-                        <i class="fas fa-terminal text-red-600 mr-4"></i> Tournament Config
-                    </h2>
-                    <div class="space-y-8">
-                        <textarea id="teamInput" rows="6" class="w-full bg-zinc-950 border border-zinc-800 rounded-3xl p-6 text-white focus:border-red-600 outline-none transition-all font-mono text-sm leading-relaxed" placeholder="Enter 48 players..."></textarea>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <button onclick="generateTournamentData()" class="red-gradient text-white font-black py-5 rounded-2xl text-[10px] uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] transition">Initialize GS</button>
-                            <button onclick="advanceToKnockout()" id="knockoutBtn" class="bg-zinc-900 text-zinc-400 font-black py-5 rounded-2xl text-[10px] uppercase tracking-[0.2em] border border-zinc-800 hover:border-red-600 transition">Advance Final</button>
-                            <button onclick="resetTournament()" class="bg-black text-red-600 font-black py-5 rounded-2xl text-[10px] uppercase tracking-[0.2em] border border-red-900/20 hover:bg-red-600 hover:text-white transition">Wipe Cloud</button>
-                        </div>
-                    </div>
+        <section id="admin-panel" class="tab-content space-y-6">
+            <div class="bg-zinc-900/50 rounded-3xl p-6 border border-white/5">
+                <h3 class="text-[10px] font-black uppercase text-red-600 mb-4 tracking-widest">Tournament Setup</h3>
+                <textarea id="teamInput" rows="4" class="w-full bg-black border border-zinc-800 rounded-2xl p-4 text-xs text-white mb-4 outline-none focus:border-red-600" placeholder="Paste 48 players names..."></textarea>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="generateTournamentData()" class="red-gradient p-4 rounded-xl text-[9px] font-black uppercase">Create Groups</button>
+                    <button onclick="advanceToKnockout()" class="bg-zinc-800 p-4 rounded-xl text-[9px] font-black uppercase">Start Knockout</button>
                 </div>
             </div>
-            <div id="admin-match-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+            <div id="admin-match-list" class="space-y-2"></div>
         </section>
 
         <!-- USER VIEW -->
         <section id="user-view" class="tab-content active">
-            <div class="flex justify-center mb-16">
-                <div class="inline-flex bg-zinc-950 p-1.5 rounded-3xl border border-zinc-800">
-                    <button onclick="toggleUserSubTab('group')" id="sub-btn-group" class="px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all bg-red-600 text-white shadow-lg shadow-red-600/20">Group Stage</button>
-                    <button onclick="toggleUserSubTab('knockout')" id="sub-btn-knock" class="px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all text-zinc-500">Knockout</button>
-                </div>
+            <div class="flex bg-zinc-900 p-1 rounded-2xl border border-zinc-800 mb-6">
+                <button onclick="toggleUserSubTab('group')" id="sub-btn-group" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-red-600">Group Stage</button>
+                <button onclick="toggleUserSubTab('knockout')" id="sub-btn-knock" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-zinc-500">Knockout</button>
             </div>
 
             <div id="group-stage-content">
-                <div class="flex items-center justify-center space-x-3 mb-10 overflow-x-auto no-scrollbar pb-4">
-                    <button onclick="filterUserRound(1)" id="user-r1" class="round-btn active px-10 py-4 rounded-2xl text-[12px] uppercase whitespace-nowrap transition-all">ROUND 1</button>
-                    <button onclick="filterUserRound(2)" id="user-r2" class="round-btn px-10 py-4 rounded-2xl text-[12px] text-zinc-500 uppercase whitespace-nowrap transition-all">ROUND 2</button>
-                    <button onclick="filterUserRound(3)" id="user-r3" class="round-btn px-10 py-4 rounded-2xl text-[12px] text-zinc-500 uppercase whitespace-nowrap transition-all">ROUND 3</button>
+                <div class="flex space-x-2 overflow-x-auto no-scrollbar mb-6 pb-2">
+                    <button onclick="filterRound(1)" id="rd-1" class="flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 border border-white/5 active-round-btn">Round 1</button>
+                    <button onclick="filterRound(2)" id="rd-2" class="flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 border border-white/5 text-zinc-500">Round 2</button>
+                    <button onclick="filterRound(3)" id="rd-3" class="flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 border border-white/5 text-zinc-500">Round 3</button>
                 </div>
-                <div id="user-fixture-list" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mb-20"></div>
-                <!-- Standing Tables with more columns -->
-                <div id="group-container" class="grid grid-cols-1 xl:grid-cols-2 gap-8"></div>
+
+                <div class="mb-10">
+                    <h3 class="text-[10px] font-black uppercase text-zinc-600 tracking-[0.3em] mb-4 pl-2">Current Fixtures</h3>
+                    <div id="user-fixture-list" class="space-y-4"></div>
+                </div>
+
+                <div>
+                    <h3 class="text-[10px] font-black uppercase text-zinc-600 tracking-[0.3em] mb-4 pl-2">Group Standings</h3>
+                    <div id="group-tables-container" class="space-y-6"></div>
+                </div>
             </div>
 
             <div id="knockout-content" class="hidden">
-                <div id="knockout-bracket" class="space-y-32"></div>
+                <div id="knockout-bracket" class="space-y-12"></div>
             </div>
         </section>
     </main>
@@ -190,10 +181,7 @@
             apiKey: "AIzaSyBO_TmNXPkY2-vvDtcP8j7YX6HU-8lRpV4",
             authDomain: "theoneproleague.firebaseapp.com",
             projectId: "theoneproleague",
-            storageBucket: "theoneproleague.firebasestorage.app",
-            messagingSenderId: "983758717301",
-            appId: "1:983758717301:web:cac06eddc7160a2049133c",
-            measurementId: "G-CDX1FN0CB0"
+            appId: "1:983758717301:web:cac06eddc7160a2049133c"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -216,25 +204,22 @@
         window.openAdminLogin = () => { if(state.isAdminAuthenticated) { showTab('admin-panel'); return; } document.getElementById('admin-login-modal').classList.remove('hidden'); };
         window.closeAdminLogin = () => document.getElementById('admin-login-modal').classList.add('hidden');
         window.attemptLogin = () => {
-            if(document.getElementById('adminPasswordInput').value === "123456") {
+            if(document.getElementById('adminPasswordInput').value === "1234") {
                 state.isAdminAuthenticated = true; closeAdminLogin(); showTab('admin-panel');
-            } else document.getElementById('loginError').classList.remove('hidden');
+            }
         };
 
         window.showTab = (id) => {
-            if(id === 'admin-panel' && !state.isAdminAuthenticated) { openAdminLogin(); return; }
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             const isA = id === 'admin-panel';
-            document.getElementById('btn-admin').classList.toggle('active-nav-btn', isA);
-            document.getElementById('btn-admin').classList.toggle('text-zinc-500', !isA);
-            document.getElementById('btn-user').classList.toggle('active-nav-btn', !isA);
-            document.getElementById('btn-user').classList.toggle('text-zinc-500', isA);
+            document.getElementById('btn-admin').className = isA ? "px-4 py-2 rounded-lg text-[9px] font-black uppercase bg-red-600 text-white" : "px-4 py-2 rounded-lg text-[9px] font-black uppercase text-zinc-500";
+            document.getElementById('btn-user').className = !isA ? "px-4 py-2 rounded-lg text-[9px] font-black uppercase bg-red-600 text-white" : "px-4 py-2 rounded-lg text-[9px] font-black uppercase text-zinc-500";
         };
 
         window.generateTournamentData = async () => {
             const raw = document.getElementById('teamInput').value.split('\n').filter(n => n.trim() !== "");
-            if (raw.length !== 48) return alert("၄၈ ဦး ထည့်သွင်းပေးပါ။");
+            if (raw.length !== 48) return alert("Please enter exactly 48 names.");
             const gNames = "ABCDEFGHIJKL".split("");
             const teams = raw.sort(() => Math.random() - 0.5).map((n, i) => ({ id: i + 1, name: n.trim(), p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, group: gNames[Math.floor(i / 4)] }));
             const matches = []; let mId = 1;
@@ -250,23 +235,19 @@
             let targetM = isKo ? [...state.koMatches] : [...state.matches];
             const m = targetM.find(x => x.id === id);
             if(side === 'home') m.hS = s; else m.aS = s;
-            const res = calculateStats(state.teams, state.matches, targetM, isKo);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { teams: res.t, matches: isKo ? state.matches : targetM, koMatches: isKo ? targetM : state.koMatches });
-        };
-
-        function calculateStats(teams, gm, km, isKo) {
-            let t = teams.map(x => ({...x, p:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0}));
-            gm.forEach(m => {
-                if(m.hS !== null && m.aS !== null) {
-                    const h = t.find(x => x.id === m.home), a = t.find(x => x.id === m.away);
-                    h.p++; a.p++; h.gf += m.hS; h.ga += m.aS; a.gf += m.aS; a.ga += m.hS;
-                    if(m.hS > m.aS) { h.w++; h.pts+=3; a.l++; } else if(m.hS < m.aS) { a.w++; a.pts+=3; h.l++; } else { h.d++; a.d++; h.pts+=1; a.pts+=1; }
+            
+            let t = state.teams.map(x => ({...x, p:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0}));
+            state.matches.forEach(match => {
+                if(match.hS !== null && match.aS !== null) {
+                    const h = t.find(x => x.id === match.home), a = t.find(x => x.id === match.away);
+                    h.p++; a.p++; h.gf += match.hS; h.ga += match.aS; a.gf += match.aS; a.ga += match.hS;
+                    if(match.hS > match.aS) { h.w++; h.pts+=3; a.l++; } else if(match.hS < match.aS) { a.w++; a.pts+=3; h.l++; } else { h.d++; a.d++; h.pts+=1; a.pts+=1; }
                     h.gd = h.gf - h.ga; a.gd = a.gf - a.ga;
                 }
             });
-            if(isKo) km.forEach(m => { if(m.hS !== null && m.aS !== null && m.nextMatch) { const winner = m.hS >= m.aS ? m.home : m.away; const nm = km.find(x => x.id === m.nextMatch); if(m.nextPos === 'home') nm.home = winner; else nm.away = winner; } });
-            return { t, km };
-        }
+            if(isKo) targetM.forEach(m => { if(m.hS !== null && m.aS !== null && m.nextMatch) { const winner = m.hS >= m.aS ? m.home : m.away; const nm = targetM.find(x => x.id === m.nextMatch); if(m.nextPos === 'home') nm.home = winner; else nm.away = winner; } });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { teams: t, matches: isKo ? state.matches : targetM, koMatches: isKo ? targetM : state.koMatches });
+        };
 
         window.advanceToKnockout = async () => {
             const gNames = "ABCDEFGHIJKL".split(""); const qual = [];
@@ -274,7 +255,7 @@
             const thirds = state.teams.filter(t => { const gt = state.teams.filter(x => x.group === t.group).sort((a,b) => b.pts - a.pts || b.gd - a.gd); return gt[2].id === t.id; }).sort((a,b) => b.pts - a.pts || b.gd - a.gd).slice(0, 8);
             qual.push(...thirds);
             const ko = [];
-            for(let i=0; i<16; i++) ko.push({ id: 100+i, stage: 'R32', home: qual[i*2].id, away: qual[i*2+1].id, hS: null, aS: null, nextMatch: 200 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
+            for(let i=0; i<16; i++) ko.push({ id: 100+i, stage: 'R32', home: qual[i*2]?.id || null, away: qual[i*2+1]?.id || null, hS: null, aS: null, nextMatch: 200 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
             for(let i=0; i<8; i++) ko.push({ id: 200+i, stage: 'R16', home: null, away: null, hS: null, aS: null, nextMatch: 300 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
             for(let i=0; i<4; i++) ko.push({ id: 300+i, stage: 'QF', home: null, away: null, hS: null, aS: null, nextMatch: 400 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
             for(let i=0; i<2; i++) ko.push({ id: 400+i, stage: 'SF', home: null, away: null, hS: null, aS: null, nextMatch: 500, nextPos: i%2===0?'home':'away'});
@@ -283,127 +264,145 @@
             toggleUserSubTab('knockout');
         };
 
-        window.resetTournament = async () => { if(confirm("Data များအားလုံး ဖျက်သိမ်းမည်မှာ သေချာပါသလား?")) await setDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { teams: [], matches: [], koMatches: [], isKnockoutStarted: false }); };
+        window.filterRound = (r) => { state.currentRound = r; renderAll(); };
 
         function renderAll() {
-            const list = document.getElementById('admin-match-list');
-            if(list) {
+            // Helper to get result class
+            const getResultClass = (s1, s2) => {
+                if (s1 === null || s2 === null) return 'text-zinc-500';
+                if (s1 > s2) return 'score-win';
+                if (s1 < s2) return 'score-loss';
+                return 'score-draw';
+            };
+
+            // Admin Render
+            const adminList = document.getElementById('admin-match-list');
+            if(adminList) {
                 const data = state.isKnockoutStarted ? state.koMatches : state.matches;
-                list.innerHTML = data.map(m => `
-                    <div class="bg-zinc-950 border border-zinc-900 p-5 rounded-3xl neon-border">
-                        <div class="text-[8px] text-zinc-600 mb-3 font-black uppercase tracking-widest">${m.stage || 'Group ' + m.group}</div>
-                        <div class="flex items-center justify-between gap-2">
-                            <div class="flex-1 text-right text-[10px] font-bold truncate">${state.teams.find(t=>t.id===m.home)?.name || 'TBD'}</div>
-                            <div class="flex space-x-1">
-                                <input type="number" value="${m.hS ?? ''}" onchange="updateScore(${m.id}, this.value, 'home', ${!!m.stage})" class="w-8 h-10 text-center rounded-xl font-black text-xs">
-                                <input type="number" value="${m.aS ?? ''}" onchange="updateScore(${m.id}, this.value, 'away', ${!!m.stage})" class="w-8 h-10 text-center rounded-xl font-black text-xs">
-                            </div>
-                            <div class="flex-1 text-left text-[10px] font-bold truncate">${state.teams.find(t=>t.id===m.away)?.name || 'TBD'}</div>
+                adminList.innerHTML = data.map(m => `
+                    <div class="bg-zinc-950 p-4 rounded-2xl flex items-center justify-between border border-white/5">
+                        <span class="text-[8px] font-black text-zinc-600 w-8">${m.stage || m.group}</span>
+                        <div class="flex-1 flex items-center justify-center space-x-2">
+                            <span class="text-[10px] truncate w-20 text-right">${state.teams.find(t=>t.id===m.home)?.name || 'TBD'}</span>
+                            <input type="number" value="${m.hS ?? ''}" onchange="updateScore(${m.id}, this.value, 'home', ${!!m.stage})" class="w-8 h-8 bg-black rounded text-center text-xs">
+                            <input type="number" value="${m.aS ?? ''}" onchange="updateScore(${m.id}, this.value, 'away', ${!!m.stage})" class="w-8 h-8 bg-black rounded text-center text-xs">
+                            <span class="text-[10px] truncate w-20 text-left">${state.teams.find(t=>t.id===m.away)?.name || 'TBD'}</span>
                         </div>
                     </div>`).join('');
             }
 
-            const ulist = document.getElementById('user-fixture-list');
-            ulist.innerHTML = state.matches.filter(m => m.round === state.currentRound).map(m => {
-                let hColor = "", aColor = "";
-                if(m.hS !== null && m.aS !== null) {
-                    if(m.hS > m.aS) { hColor = "score-win"; aColor = "score-loss"; }
-                    else if(m.hS < m.aS) { hColor = "score-loss"; aColor = "score-win"; }
-                    else { hColor = "score-draw"; aColor = "score-draw"; }
-                }
+            // User Round Selection State
+            for(let i=1; i<=3; i++) {
+                const btn = document.getElementById(`rd-${i}`);
+                if (btn) btn.className = `flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 border border-white/5 ${state.currentRound === i ? 'active-round-btn' : 'text-zinc-500'}`;
+            }
 
-                return `
-                <div class="dark-card p-5 rounded-3xl flex items-center justify-between border-l-4 border-red-600">
-                    <div class="text-[9px] text-red-600 font-black w-6">G${m.group}</div>
-                    <div class="flex-1 flex justify-center items-center space-x-3">
-                        <div class="w-[35%] text-right text-[10px] font-bold truncate text-zinc-300">${state.teams.find(t=>t.id===m.home)?.name}</div>
-                        <div class="px-4 py-2 bg-black rounded-xl text-[11px] font-black min-w-[70px] text-center border border-zinc-800 flex justify-between">
-                            <span class="${hColor}">${m.hS ?? ''}</span>
-                            <span class="text-zinc-600 mx-1">${m.hS !== null ? '-' : 'VS'}</span>
-                            <span class="${aColor}">${m.aS ?? ''}</span>
+            // User Fixture List
+            const fixtureList = document.getElementById('user-fixture-list');
+            const roundMatches = state.matches.filter(m => m.round === state.currentRound);
+            
+            let fixtureHtml = "";
+            let currentGroupHeader = "";
+            
+            roundMatches.sort((a,b) => a.group.localeCompare(b.group)).forEach(m => {
+                if(m.group !== currentGroupHeader) {
+                    currentGroupHeader = m.group;
+                    fixtureHtml += `
+                    <div class="flex items-center space-x-4 py-4">
+                        <div class="h-[1px] flex-1 bg-gradient-to-r from-transparent via-red-900 to-transparent"></div>
+                        <span class="group-divider-text text-[10px] font-black uppercase italic">Group ${m.group}</span>
+                        <div class="h-[1px] flex-1 bg-gradient-to-r from-transparent via-red-900 to-transparent"></div>
+                    </div>`;
+                }
+                
+                fixtureHtml += `
+                <div class="bg-zinc-900/80 p-4 rounded-2xl border border-white/5 flex items-center">
+                    <div class="flex-1 flex items-center justify-between">
+                        <div class="flex-1 text-right text-[11px] font-bold truncate pr-3 text-zinc-300">${state.teams.find(t=>t.id===m.home)?.name}</div>
+                        <div class="flex items-center space-x-1">
+                            <div class="score-box ${getResultClass(m.hS, m.aS)}">${m.hS ?? ''}</div>
+                            <div class="score-box ${getResultClass(m.aS, m.hS)}">${m.aS ?? ''}</div>
                         </div>
-                        <div class="w-[35%] text-left text-[10px] font-bold truncate text-zinc-300">${state.teams.find(t=>t.id===m.away)?.name}</div>
+                        <div class="flex-1 text-left text-[11px] font-bold truncate pl-3 text-zinc-300">${state.teams.find(t=>t.id===m.away)?.name}</div>
                     </div>
                 </div>`;
-            }).join('');
+            });
+            fixtureList.innerHTML = fixtureHtml;
 
-            const gcont = document.getElementById('group-container');
-            gcont.innerHTML = "ABCDEFGHIJKL".split("").map(g => {
+            // User Tables
+            const tableCont = document.getElementById('group-tables-container');
+            tableCont.innerHTML = "ABCDEFGHIJKL".split("").map(g => {
                 const gt = state.teams.filter(t => t.group === g).sort((a,b) => b.pts - a.pts || b.gd - a.gd);
                 return `
-                <div class="dark-card rounded-3xl overflow-hidden neon-border">
-                    <div class="bg-zinc-950 px-6 py-4 text-[10px] font-black uppercase tracking-[0.3em] text-red-600 flex justify-between">Group ${g} <i class="fas fa-trophy opacity-20"></i></div>
-                    <div class="overflow-x-auto">
-                        <table class="standing-table w-full text-[10px]">
-                            <tr class="text-zinc-600 text-[8px] uppercase tracking-widest border-b border-zinc-900">
-                                <th class="p-4 text-left">Player</th>
-                                <th class="p-4">P</th>
-                                <th class="p-4">W</th>
-                                <th class="p-4">D</th>
-                                <th class="p-4">L</th>
-                                <th class="p-4">GF</th>
-                                <th class="p-4">GA</th>
-                                <th class="p-4">GD</th>
-                                <th class="p-4">Pts</th>
+                <div class="bg-zinc-900/40 p-3 rounded-3xl border border-white/5">
+                    <div class="text-[10px] font-black text-red-600 uppercase mb-3 px-2 tracking-widest flex items-center justify-between">
+                        <span>Group ${g}</span>
+                        <span class="text-[7px] text-zinc-600 font-normal">Full Stats</span>
+                    </div>
+                    <table class="standing-table">
+                        <thead>
+                            <tr>
+                                <th class="col-player">PLAYER</th>
+                                <th class="col-stat">P</th>
+                                <th class="col-stat text-green-600/50">W</th>
+                                <th class="col-stat text-yellow-600/50">D</th>
+                                <th class="col-stat text-red-600/50">L</th>
+                                <th class="col-stat">GF</th>
+                                <th class="col-stat">GA</th>
+                                <th class="col-stat">GD</th>
+                                <th class="col-pts">PTS</th>
                             </tr>
+                        </thead>
+                        <tbody>
                             ${gt.map((t,i) => `
-                            <tr class="${i<2?'bg-red-600/5 text-white':'text-zinc-400'} border-b border-zinc-900/50 last:border-0">
-                                <td class="p-4 font-bold truncate max-w-[120px] text-left">${t.name}</td>
-                                <td class="p-4">${t.p}</td>
-                                <td class="p-4 text-green-500/70">${t.w}</td>
-                                <td class="p-4 text-yellow-500/70">${t.d}</td>
-                                <td class="p-4 text-red-500/70">${t.l}</td>
-                                <td class="p-4">${t.gf}</td>
-                                <td class="p-4">${t.ga}</td>
-                                <td class="p-4">${t.gd > 0 ? '+' + t.gd : t.gd}</td>
-                                <td class="p-4 font-black ${i<2?'text-red-500 neon-text-glow':''} text-base">${t.pts}</td>
+                            <tr class="${i<2?'text-white':'text-zinc-500'}">
+                                <td class="col-player font-bold flex items-center overflow-hidden">
+                                    <span class="w-3 shrink-0 opacity-20 text-[7px] mr-1">${i+1}</span>
+                                    <span class="truncate">${t.name}</span>
+                                </td>
+                                <td class="col-stat">${t.p}</td>
+                                <td class="col-stat font-medium">${t.w}</td>
+                                <td class="col-stat font-medium">${t.d}</td>
+                                <td class="col-stat font-medium">${t.l}</td>
+                                <td class="col-stat">${t.gf}</td>
+                                <td class="col-stat">${t.ga}</td>
+                                <td class="col-stat font-bold ${t.gd > 0 ? 'text-green-500' : t.gd < 0 ? 'text-red-500' : ''}">${t.gd > 0 ? '+'+t.gd : t.gd}</td>
+                                <td class="col-pts font-black text-[12px] ${i<2?'text-red-600 neon-text':''}">${t.pts}</td>
                             </tr>`).join('')}
-                        </table>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>`;
             }).join('');
 
+            // Knockout Render
             const bracket = document.getElementById('knockout-bracket');
-            if(!state.isKnockoutStarted) bracket.innerHTML = `<div class="text-center py-20 opacity-20 italic tracking-widest text-xs uppercase">Awaiting Knockout Stage...</div>`;
-            else bracket.innerHTML = ['R32', 'R16', 'QF', 'SF', 'Final'].map(s => {
-                const km = state.koMatches.filter(m => m.stage === s);
-                return `<div class="space-y-8">
-                    <div class="flex items-center space-x-4 mb-10"><div class="h-[2px] flex-1 bg-gradient-to-r from-transparent to-zinc-800"></div><h3 class="text-red-600 font-black uppercase text-xl italic tracking-tighter neon-text-glow">${s}</h3><div class="h-[2px] flex-1 bg-gradient-to-l from-transparent to-zinc-800"></div></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">${km.map(m => {
-                        let hColor = "", aColor = "";
-                        if(m.hS !== null && m.aS !== null) {
-                            if(m.hS > m.aS) { hColor = "score-win"; aColor = "score-loss"; }
-                            else if(m.hS < m.aS) { hColor = "score-loss"; aColor = "score-win"; }
-                            else { hColor = "score-draw"; aColor = "score-draw"; }
-                        }
-                        return `
-                        <div class="dark-card p-6 rounded-[2rem] neon-border">
-                            <div class="flex justify-between mb-2 text-[11px] font-bold text-zinc-300"><span>${state.teams.find(t=>t.id===m.home)?.name || 'TBD'}</span><span class="${hColor} font-black">${m.hS ?? '-'}</span></div>
-                            <div class="flex justify-between text-[11px] font-bold text-zinc-300"><span>${state.teams.find(t=>t.id===m.away)?.name || 'TBD'}</span><span class="${aColor} font-black">${m.aS ?? '-'}</span></div>
-                        </div>`;
-                    }).join('')}
-                    </div>
-                </div>`;
-            }).join('');
+            if(state.isKnockoutStarted) {
+                bracket.innerHTML = ['R32', 'R16', 'QF', 'SF', 'Final'].map(s => {
+                    const km = state.koMatches.filter(m => m.stage === s);
+                    return `<div class="space-y-4">
+                        <div class="text-[9px] font-black uppercase text-center text-red-600 tracking-[0.5em] mb-6">${s} Stage</div>
+                        <div class="grid grid-cols-1 gap-2">${km.map(m => `
+                            <div class="bg-zinc-900/60 p-4 rounded-2xl border border-white/5 flex flex-col space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[10px] font-bold ${m.hS > m.aS ? 'text-green-500' : m.hS < m.aS ? 'text-red-500' : 'text-zinc-400'}">${state.teams.find(t=>t.id===m.home)?.name || 'TBD'}</span>
+                                    <span class="font-black text-xs ${getResultClass(m.hS, m.aS)}">${m.hS ?? '-'}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[10px] font-bold ${m.aS > m.hS ? 'text-green-500' : m.aS < m.hS ? 'text-red-500' : 'text-zinc-400'}">${state.teams.find(t=>t.id===m.away)?.name || 'TBD'}</span>
+                                    <span class="font-black text-xs ${getResultClass(m.aS, m.hS)}">${m.aS ?? '-'}</span>
+                                </div>
+                            </div>`).join('')}</div>
+                    </div>`;
+                }).join('');
+            }
         }
-
-        window.filterUserRound = (r) => { 
-            state.currentRound = r; 
-            renderAll(); 
-            document.querySelectorAll('.round-btn').forEach((b, i) => {
-                const isActive = i + 1 === r;
-                b.classList.toggle('active', isActive);
-                if (!isActive) b.classList.add('text-zinc-500');
-                else b.classList.remove('text-zinc-500');
-            }); 
-        };
 
         window.toggleUserSubTab = (t) => {
             const isG = t === 'group';
             document.getElementById('group-stage-content').classList.toggle('hidden', !isG);
             document.getElementById('knockout-content').classList.toggle('hidden', isG);
-            document.getElementById('sub-btn-group').className = isG ? "px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all bg-red-600 text-white shadow-lg shadow-red-600/20" : "px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all text-zinc-500";
-            document.getElementById('sub-btn-knock').className = !isG ? "px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all bg-red-600 text-white shadow-lg shadow-red-600/20" : "px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all text-zinc-500";
+            document.getElementById('sub-btn-group').className = isG ? "flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-red-600" : "flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-zinc-500";
+            document.getElementById('sub-btn-knock').className = !isG ? "flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-red-600" : "flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-zinc-500";
         };
     </script>
 </body>
