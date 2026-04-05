@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="my">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -13,7 +13,6 @@
             --neon-red: #ff003c;
             --neon-glow: rgba(255, 0, 60, 0.6);
             --dark-bg: #050505;
-            --card-bg: rgba(18, 18, 18, 0.95);
         }
 
         body { 
@@ -37,12 +36,11 @@
         .neon-text { text-shadow: 0 0 10px var(--neon-glow), 0 0 20px var(--neon-glow); }
         .red-gradient { background: linear-gradient(135deg, #ff003c 0%, #9e0025 100%); }
 
-        /* Standing Table Styles */
+        /* Standing Table */
         .standing-table { font-size: 10px; width: 100%; border-collapse: separate; border-spacing: 0 4px; table-layout: fixed; }
         .standing-table th { color: #666; font-size: 8px; text-transform: uppercase; padding: 8px 2px; text-align: center; }
         .standing-table td { background: rgba(255,255,255,0.02); padding: 10px 2px; text-align: center; vertical-align: middle; }
         
-        /* Column Widths */
         .col-player { width: 35%; text-align: left !important; padding-left: 8px !important; }
         .col-stat { width: 8%; }
         .col-pts { width: 12%; }
@@ -51,21 +49,13 @@
         .standing-table tr td:last-child { border-radius: 0 8px 8px 0; }
 
         .score-box {
-            background: #000;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            font-weight: 900;
-            font-size: 13px;
+            background: #000; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; font-weight: 900; font-size: 13px;
             border: 1px solid #222;
-            transition: all 0.3s ease;
         }
 
-        /* Result Colors */
-        .score-win { color: #22c55e !important; border-color: rgba(34, 197, 94, 0.4) !important; text-shadow: 0 0 8px rgba(34, 197, 94, 0.3); }
+        .score-win { color: #22c55e !important; border-color: rgba(34, 197, 94, 0.4) !important; }
         .score-loss { color: #ef4444 !important; border-color: rgba(239, 68, 68, 0.4) !important; }
         .score-draw { color: #eab308 !important; border-color: rgba(234, 179, 8, 0.4) !important; }
 
@@ -83,7 +73,6 @@
 
         .loading-overlay { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
 
-        /* Neon Header Styles */
         .group-divider-text {
             color: var(--neon-red);
             text-shadow: 0 0 8px var(--neon-glow);
@@ -101,7 +90,7 @@
 
     <!-- Admin Login -->
     <div id="admin-login-modal" class="fixed inset-0 z-[1000] flex items-center justify-center hidden bg-black/95 p-6">
-        <div class="bg-zinc-900 w-full max-w-xs rounded-[2rem] p-8 border border-white/5 shadow-2xl">
+        <div class="bg-zinc-900 w-full max-w-xs rounded-[2rem] p-8 border border-white/5">
             <h2 class="text-center font-black uppercase text-xs tracking-widest mb-6">Admin Verification</h2>
             <input type="password" id="adminPasswordInput" class="w-full bg-black border border-zinc-800 rounded-xl p-4 text-center tracking-[1em] mb-4 outline-none focus:border-red-600" placeholder="••••">
             <button onclick="attemptLogin()" class="w-full red-gradient rounded-xl p-4 font-black uppercase text-[10px]">Access Panel</button>
@@ -112,7 +101,7 @@
     <header class="glass-header sticky top-0 z-50 px-5 py-4">
         <div class="flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 red-gradient rounded-lg flex items-center justify-center shadow-lg">
+                <div class="w-8 h-8 red-gradient rounded-lg flex items-center justify-center">
                     <i class="fas fa-trophy text-white text-[10px]"></i>
                 </div>
                 <div>
@@ -132,18 +121,19 @@
         <section id="admin-panel" class="tab-content space-y-6">
             <div class="bg-zinc-900/50 rounded-3xl p-6 border border-white/5">
                 <h3 class="text-[10px] font-black uppercase text-red-600 mb-4 tracking-widest">Tournament Setup</h3>
-                <textarea id="teamInput" rows="4" class="w-full bg-black border border-zinc-800 rounded-2xl p-4 text-xs text-white mb-4 outline-none focus:border-red-600" placeholder="Paste 48 players names..."></textarea>
+                <textarea id="teamInput" rows="4" class="w-full bg-black border border-zinc-800 rounded-2xl p-4 text-xs text-white mb-4 outline-none" placeholder="Paste 48 players names..."></textarea>
                 <div class="grid grid-cols-2 gap-2">
                     <button onclick="generateTournamentData()" class="red-gradient p-4 rounded-xl text-[9px] font-black uppercase">Create Groups</button>
-                    <button onclick="advanceToKnockout()" class="bg-zinc-800 p-4 rounded-xl text-[9px] font-black uppercase">Start Knockout</button>
+                    <button id="admin-ko-btn" onclick="advanceToKnockout()" class="bg-zinc-800 p-4 rounded-xl text-[9px] font-black uppercase opacity-50 cursor-not-allowed" disabled>Start Knockout</button>
                 </div>
+                <p id="ko-hint" class="text-[8px] text-zinc-500 mt-2 italic text-center">Group stage အားလုံးပြီးမှ Knockout စနိုင်မည်</p>
             </div>
             <div id="admin-match-list" class="space-y-2"></div>
         </section>
 
         <!-- USER VIEW -->
         <section id="user-view" class="tab-content active">
-            <div class="flex bg-zinc-900 p-1 rounded-2xl border border-zinc-800 mb-6">
+            <div id="user-sub-tabs" class="flex bg-zinc-900 p-1 rounded-2xl border border-zinc-800 mb-6 hidden">
                 <button onclick="toggleUserSubTab('group')" id="sub-btn-group" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-red-600">Group Stage</button>
                 <button onclick="toggleUserSubTab('knockout')" id="sub-btn-knock" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-zinc-500">Knockout</button>
             </div>
@@ -195,7 +185,10 @@
             if (!u) await signInAnonymously(auth);
             else {
                 onSnapshot(doc(db, 'artifacts', appId, 'public', 'mainData'), (snap) => {
-                    if (snap.exists()) { Object.assign(state, snap.data()); renderAll(); }
+                    if (snap.exists()) { 
+                        Object.assign(state, snap.data()); 
+                        renderAll(); 
+                    }
                     document.getElementById('loading-screen').style.display = 'none';
                 });
             }
@@ -219,7 +212,7 @@
 
         window.generateTournamentData = async () => {
             const raw = document.getElementById('teamInput').value.split('\n').filter(n => n.trim() !== "");
-            if (raw.length !== 48) return alert("Please enter exactly 48 names.");
+            if (raw.length !== 48) return alert("ကျေးဇူးပြု၍ Player နာမည် ၄၈ ခု ထည့်ပေးပါ");
             const gNames = "ABCDEFGHIJKL".split("");
             const teams = raw.sort(() => Math.random() - 0.5).map((n, i) => ({ id: i + 1, name: n.trim(), p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, group: gNames[Math.floor(i / 4)] }));
             const matches = []; let mId = 1;
@@ -236,6 +229,7 @@
             const m = targetM.find(x => x.id === id);
             if(side === 'home') m.hS = s; else m.aS = s;
             
+            // Recalculate Group Standings
             let t = state.teams.map(x => ({...x, p:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0}));
             state.matches.forEach(match => {
                 if(match.hS !== null && match.aS !== null) {
@@ -245,21 +239,52 @@
                     h.gd = h.gf - h.ga; a.gd = a.gf - a.ga;
                 }
             });
-            if(isKo) targetM.forEach(m => { if(m.hS !== null && m.aS !== null && m.nextMatch) { const winner = m.hS >= m.aS ? m.home : m.away; const nm = targetM.find(x => x.id === m.nextMatch); if(m.nextPos === 'home') nm.home = winner; else nm.away = winner; } });
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { teams: t, matches: isKo ? state.matches : targetM, koMatches: isKo ? targetM : state.koMatches });
+
+            // Knockout progression
+            if(isKo) {
+                targetM.forEach(m => { 
+                    if(m.hS !== null && m.aS !== null && m.nextMatch) { 
+                        const winner = m.hS >= m.aS ? m.home : m.away; 
+                        const nm = targetM.find(x => x.id === m.nextMatch); 
+                        if(m.nextPos === 'home') nm.home = winner; else nm.away = winner; 
+                    } 
+                });
+            }
+
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { 
+                teams: t, 
+                matches: isKo ? state.matches : targetM, 
+                koMatches: isKo ? targetM : state.koMatches 
+            });
         };
 
         window.advanceToKnockout = async () => {
-            const gNames = "ABCDEFGHIJKL".split(""); const qual = [];
-            gNames.forEach(g => { const gt = state.teams.filter(t => t.group === g).sort((a,b) => b.pts - a.pts || b.gd - a.gd); qual.push(gt[0], gt[1]); });
-            const thirds = state.teams.filter(t => { const gt = state.teams.filter(x => x.group === t.group).sort((a,b) => b.pts - a.pts || b.gd - a.gd); return gt[2].id === t.id; }).sort((a,b) => b.pts - a.pts || b.gd - a.gd).slice(0, 8);
-            qual.push(...thirds);
+            const gNames = "ABCDEFGHIJKL".split(""); 
+            const qual = []; // 1st and 2nd from each group (24 teams)
+            const allThirds = [];
+
+            gNames.forEach(g => { 
+                const gt = state.teams.filter(t => t.group === g).sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf); 
+                qual.push(gt[0], gt[1]); 
+                allThirds.push(gt[2]);
+            });
+
+            // Sort best 8 thirds
+            const bestThirds = allThirds.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf).slice(0, 8);
+            qual.push(...bestThirds);
+
             const ko = [];
+            // R32 (100-115)
             for(let i=0; i<16; i++) ko.push({ id: 100+i, stage: 'R32', home: qual[i*2]?.id || null, away: qual[i*2+1]?.id || null, hS: null, aS: null, nextMatch: 200 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
+            // R16 (200-207)
             for(let i=0; i<8; i++) ko.push({ id: 200+i, stage: 'R16', home: null, away: null, hS: null, aS: null, nextMatch: 300 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
+            // QF (300-303)
             for(let i=0; i<4; i++) ko.push({ id: 300+i, stage: 'QF', home: null, away: null, hS: null, aS: null, nextMatch: 400 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
+            // SF (400-401)
             for(let i=0; i<2; i++) ko.push({ id: 400+i, stage: 'SF', home: null, away: null, hS: null, aS: null, nextMatch: 500, nextPos: i%2===0?'home':'away'});
+            // Final (500)
             ko.push({ id: 500, stage: 'Final', home: null, away: null, hS: null, aS: null });
+
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { koMatches: ko, isKnockoutStarted: true });
             toggleUserSubTab('knockout');
         };
@@ -267,21 +292,37 @@
         window.filterRound = (r) => { state.currentRound = r; renderAll(); };
 
         function renderAll() {
-            // Helper to get result class
             const getResultClass = (s1, s2) => {
                 if (s1 === null || s2 === null) return 'text-zinc-500';
-                if (s1 > s2) return 'score-win';
-                if (s1 < s2) return 'score-loss';
-                return 'score-draw';
+                return s1 > s2 ? 'score-win' : (s1 < s2 ? 'score-loss' : 'score-draw');
             };
 
-            // Admin Render
+            // Admin Logic: Check if group stage is done
+            const groupDone = state.matches.length > 0 && state.matches.every(m => m.hS !== null && m.aS !== null);
+            const koBtn = document.getElementById('admin-ko-btn');
+            if(koBtn) {
+                if(groupDone && !state.isKnockoutStarted) {
+                    koBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    koBtn.classList.add('red-gradient');
+                    koBtn.disabled = false;
+                    document.getElementById('ko-hint').innerText = "Group stage ပြီးဆုံးပါပြီ။ Knockout စတင်နိုင်ပါသည်။";
+                } else if(state.isKnockoutStarted) {
+                    koBtn.innerText = "Knockout Active";
+                    koBtn.disabled = true;
+                    koBtn.classList.add('opacity-50');
+                }
+            }
+
+            // Tabs visibility
+            document.getElementById('user-sub-tabs').classList.toggle('hidden', !state.isKnockoutStarted);
+
+            // Render Match List (Admin)
             const adminList = document.getElementById('admin-match-list');
             if(adminList) {
                 const data = state.isKnockoutStarted ? state.koMatches : state.matches;
                 adminList.innerHTML = data.map(m => `
                     <div class="bg-zinc-950 p-4 rounded-2xl flex items-center justify-between border border-white/5">
-                        <span class="text-[8px] font-black text-zinc-600 w-8">${m.stage || m.group}</span>
+                        <span class="text-[8px] font-black text-zinc-600 w-8">${m.stage || 'G' + m.group}</span>
                         <div class="flex-1 flex items-center justify-center space-x-2">
                             <span class="text-[10px] truncate w-20 text-right">${state.teams.find(t=>t.id===m.home)?.name || 'TBD'}</span>
                             <input type="number" value="${m.hS ?? ''}" onchange="updateScore(${m.id}, this.value, 'home', ${!!m.stage})" class="w-8 h-8 bg-black rounded text-center text-xs">
@@ -291,107 +332,62 @@
                     </div>`).join('');
             }
 
-            // User Round Selection State
-            for(let i=1; i<=3; i++) {
-                const btn = document.getElementById(`rd-${i}`);
-                if (btn) btn.className = `flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 border border-white/5 ${state.currentRound === i ? 'active-round-btn' : 'text-zinc-500'}`;
-            }
-
             // User Fixture List
             const fixtureList = document.getElementById('user-fixture-list');
             const roundMatches = state.matches.filter(m => m.round === state.currentRound);
-            
-            let fixtureHtml = "";
-            let currentGroupHeader = "";
-            
-            roundMatches.sort((a,b) => a.group.localeCompare(b.group)).forEach(m => {
-                if(m.group !== currentGroupHeader) {
-                    currentGroupHeader = m.group;
-                    fixtureHtml += `
-                    <div class="flex items-center space-x-4 py-4">
-                        <div class="h-[1px] flex-1 bg-gradient-to-r from-transparent via-red-900 to-transparent"></div>
-                        <span class="group-divider-text text-[10px] font-black uppercase italic">Group ${m.group}</span>
-                        <div class="h-[1px] flex-1 bg-gradient-to-r from-transparent via-red-900 to-transparent"></div>
-                    </div>`;
+            let fixtureHtml = ""; let lastG = "";
+            roundMatches.sort((a,b)=>a.group.localeCompare(b.group)).forEach(m => {
+                if(m.group !== lastG) {
+                    lastG = m.group;
+                    fixtureHtml += `<div class="flex items-center space-x-4 py-4"><div class="h-[1px] flex-1 bg-zinc-900"></div><span class="group-divider-text text-[10px] font-black italic">Group ${m.group}</span><div class="h-[1px] flex-1 bg-zinc-900"></div></div>`;
                 }
-                
-                fixtureHtml += `
-                <div class="bg-zinc-900/80 p-4 rounded-2xl border border-white/5 flex items-center">
-                    <div class="flex-1 flex items-center justify-between">
-                        <div class="flex-1 text-right text-[11px] font-bold truncate pr-3 text-zinc-300">${state.teams.find(t=>t.id===m.home)?.name}</div>
-                        <div class="flex items-center space-x-1">
-                            <div class="score-box ${getResultClass(m.hS, m.aS)}">${m.hS ?? ''}</div>
-                            <div class="score-box ${getResultClass(m.aS, m.hS)}">${m.aS ?? ''}</div>
-                        </div>
-                        <div class="flex-1 text-left text-[11px] font-bold truncate pl-3 text-zinc-300">${state.teams.find(t=>t.id===m.away)?.name}</div>
+                fixtureHtml += `<div class="bg-zinc-900/80 p-4 rounded-2xl border border-white/5 flex items-center justify-between">
+                    <div class="flex-1 text-right text-[11px] truncate pr-3">${state.teams.find(t=>t.id===m.home)?.name}</div>
+                    <div class="flex items-center space-x-1">
+                        <div class="score-box ${getResultClass(m.hS, m.aS)}">${m.hS ?? ''}</div>
+                        <div class="score-box ${getResultClass(m.aS, m.hS)}">${m.aS ?? ''}</div>
                     </div>
+                    <div class="flex-1 text-left text-[11px] truncate pl-3">${state.teams.find(t=>t.id===m.away)?.name}</div>
                 </div>`;
             });
-            fixtureList.innerHTML = fixtureHtml;
+            if(fixtureList) fixtureList.innerHTML = fixtureHtml;
 
             // User Tables
             const tableCont = document.getElementById('group-tables-container');
-            tableCont.innerHTML = "ABCDEFGHIJKL".split("").map(g => {
-                const gt = state.teams.filter(t => t.group === g).sort((a,b) => b.pts - a.pts || b.gd - a.gd);
-                return `
-                <div class="bg-zinc-900/40 p-3 rounded-3xl border border-white/5">
-                    <div class="text-[10px] font-black text-red-600 uppercase mb-3 px-2 tracking-widest flex items-center justify-between">
-                        <span>Group ${g}</span>
-                        <span class="text-[7px] text-zinc-600 font-normal">Full Stats</span>
-                    </div>
-                    <table class="standing-table">
-                        <thead>
-                            <tr>
-                                <th class="col-player">PLAYER</th>
-                                <th class="col-stat">P</th>
-                                <th class="col-stat text-green-600/50">W</th>
-                                <th class="col-stat text-yellow-600/50">D</th>
-                                <th class="col-stat text-red-600/50">L</th>
-                                <th class="col-stat">GF</th>
-                                <th class="col-stat">GA</th>
-                                <th class="col-stat">GD</th>
-                                <th class="col-pts">PTS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${gt.map((t,i) => `
-                            <tr class="${i<2?'text-white':'text-zinc-500'}">
-                                <td class="col-player font-bold flex items-center overflow-hidden">
-                                    <span class="w-3 shrink-0 opacity-20 text-[7px] mr-1">${i+1}</span>
-                                    <span class="truncate">${t.name}</span>
-                                </td>
+            if(tableCont) {
+                tableCont.innerHTML = "ABCDEFGHIJKL".split("").map(g => {
+                    const gt = state.teams.filter(t => t.group === g).sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+                    return `
+                    <div class="bg-zinc-900/40 p-3 rounded-3xl border border-white/5">
+                        <div class="text-[10px] font-black text-red-600 uppercase mb-3 px-2">Group ${g}</div>
+                        <table class="standing-table">
+                            <thead><tr><th class="col-player">PLAYER</th><th class="col-stat">P</th><th class="col-stat">GD</th><th class="col-pts">PTS</th></tr></thead>
+                            <tbody>${gt.map((t,i) => `<tr class="${i<2?'text-white':'text-zinc-500'}">
+                                <td class="col-player font-bold truncate">${i+1}. ${t.name}</td>
                                 <td class="col-stat">${t.p}</td>
-                                <td class="col-stat font-medium">${t.w}</td>
-                                <td class="col-stat font-medium">${t.d}</td>
-                                <td class="col-stat font-medium">${t.l}</td>
-                                <td class="col-stat">${t.gf}</td>
-                                <td class="col-stat">${t.ga}</td>
-                                <td class="col-stat font-bold ${t.gd > 0 ? 'text-green-500' : t.gd < 0 ? 'text-red-500' : ''}">${t.gd > 0 ? '+'+t.gd : t.gd}</td>
-                                <td class="col-pts font-black text-[12px] ${i<2?'text-red-600 neon-text':''}">${t.pts}</td>
-                            </tr>`).join('')}
-                        </tbody>
-                    </table>
-                </div>`;
-            }).join('');
+                                <td class="col-stat ${t.gd>0?'text-green-500':''}">${t.gd}</td>
+                                <td class="col-pts font-black ${i<2?'text-red-600 neon-text':''}">${t.pts}</td>
+                            </tr>`).join('')}</tbody>
+                        </table>
+                    </div>`;
+                }).join('');
+            }
 
-            // Knockout Render
+            // Knockout Bracket
             const bracket = document.getElementById('knockout-bracket');
-            if(state.isKnockoutStarted) {
+            if(state.isKnockoutStarted && bracket) {
                 bracket.innerHTML = ['R32', 'R16', 'QF', 'SF', 'Final'].map(s => {
                     const km = state.koMatches.filter(m => m.stage === s);
                     return `<div class="space-y-4">
-                        <div class="text-[9px] font-black uppercase text-center text-red-600 tracking-[0.5em] mb-6">${s} Stage</div>
-                        <div class="grid grid-cols-1 gap-2">${km.map(m => `
-                            <div class="bg-zinc-900/60 p-4 rounded-2xl border border-white/5 flex flex-col space-y-2">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-[10px] font-bold ${m.hS > m.aS ? 'text-green-500' : m.hS < m.aS ? 'text-red-500' : 'text-zinc-400'}">${state.teams.find(t=>t.id===m.home)?.name || 'TBD'}</span>
-                                    <span class="font-black text-xs ${getResultClass(m.hS, m.aS)}">${m.hS ?? '-'}</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-[10px] font-bold ${m.aS > m.hS ? 'text-green-500' : m.aS < m.hS ? 'text-red-500' : 'text-zinc-400'}">${state.teams.find(t=>t.id===m.away)?.name || 'TBD'}</span>
-                                    <span class="font-black text-xs ${getResultClass(m.aS, m.hS)}">${m.aS ?? '-'}</span>
-                                </div>
-                            </div>`).join('')}</div>
+                        <div class="text-[9px] font-black uppercase text-center text-red-600 tracking-[0.5em] mb-4">${s === 'R32' ? 'Round of 32' : (s === 'R16' ? 'Round of 16' : s)}</div>
+                        <div class="grid grid-cols-1 gap-2">${km.map(m => {
+                            const home = state.teams.find(t=>t.id===m.home);
+                            const away = state.teams.find(t=>t.id===m.away);
+                            return `<div class="bg-zinc-900/60 p-4 rounded-2xl border border-white/5 space-y-2">
+                                <div class="flex justify-between items-center"><span class="text-[10px] ${m.hS > m.aS ? 'text-white' : 'text-zinc-500'}">${home?.name || 'TBD'}</span><span class="font-black text-xs ${getResultClass(m.hS, m.aS)}">${m.hS ?? '-'}</span></div>
+                                <div class="flex justify-between items-center"><span class="text-[10px] ${m.aS > m.hS ? 'text-white' : 'text-zinc-500'}">${away?.name || 'TBD'}</span><span class="font-black text-xs ${getResultClass(m.aS, m.hS)}">${m.aS ?? '-'}</span></div>
+                            </div>`;
+                        }).join('')}</div>
                     </div>`;
                 }).join('');
             }
@@ -403,6 +399,14 @@
             document.getElementById('knockout-content').classList.toggle('hidden', isG);
             document.getElementById('sub-btn-group').className = isG ? "flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-red-600" : "flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-zinc-500";
             document.getElementById('sub-btn-knock').className = !isG ? "flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-red-600" : "flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-zinc-500";
+        };
+
+        window.filterRound = (r) => {
+            state.currentRound = r;
+            const btns = [1,2,3].forEach(i => {
+                document.getElementById('rd-'+i).className = `flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 border border-white/5 ${i === r ? 'active-round-btn' : 'text-zinc-500'}`;
+            });
+            renderAll();
         };
     </script>
 </body>
