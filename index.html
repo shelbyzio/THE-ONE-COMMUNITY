@@ -1,322 +1,410 @@
 <!DOCTYPE html>
-<html lang="my">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UCL League Phase Simulator (Fixed Matchday Logic)</title>
+    <title>THE ONE PRO LEAGUE - NEON</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #050b24;
-            color: white;
+        :root {
+            --neon-red: #ff003c;
+            --neon-green: #00ff88;
+            --neon-yellow: #ffcc00;
+            --neon-glow: rgba(255, 0, 60, 0.5);
+            --dark-bg: #050505;
         }
 
-        .ucl-gradient {
-            background: linear-gradient(135deg, #0a1435 0%, #050b24 50%, #1e3a8a 100%);
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--dark-bg); 
+            color: #ffffff; 
+            overflow-x: hidden;
         }
 
-        .glass-card {
-            background: rgba(10, 20, 53, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #000; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--neon-red); box-shadow: 0 0 10px var(--neon-red); }
 
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #1e3a8a;
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: neonFade 0.5s ease-out; }
+        @keyframes neonFade { from { opacity: 0; filter: blur(5px); } to { opacity: 1; filter: blur(0); } }
+
+        .neon-border { border: 1px solid rgba(255, 0, 60, 0.2); transition: all 0.3s ease; }
+        .neon-border:hover { border-color: var(--neon-red); box-shadow: 0 0 15px var(--neon-glow); }
+
+        .dark-card { background: rgba(18, 18, 18, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
+
+        .red-gradient { background: linear-gradient(135deg, #ff003c 0%, #7e001e 100%); }
+        
+        .active-nav-btn { position: relative; color: white !important; }
+        .active-nav-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 20%;
+            width: 60%;
+            height: 3px;
+            background: var(--neon-red);
+            box-shadow: 0 0 10px var(--neon-red), 0 0 20px var(--neon-red);
             border-radius: 10px;
+            animation: barGlow 1.5s infinite alternate;
         }
 
-        .tab-active {
-            border-bottom: 2px solid #3b82f6;
-            color: #3b82f6;
+        .round-btn {
+            font-weight: 900 !important;
+            letter-spacing: 0.1em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .round-btn.active {
+            background: var(--neon-red);
+            color: white !important;
+            box-shadow: 0 0 25px var(--neon-glow);
+            transform: scale(1.05);
         }
 
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
+        .loading-overlay { position: fixed; inset: 0; background: #000; z-index: 200; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        
+        .neon-text-glow { text-shadow: 0 0 10px var(--neon-glow); }
+        .score-win { color: var(--neon-green); text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
+        .score-loss { color: var(--neon-red); text-shadow: 0 0 10px rgba(255, 0, 60, 0.5); }
+        .score-draw { color: var(--neon-yellow); text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); }
+        
+        input[type="number"] { background: #1a1a1a; border: 1px solid #333; color: white; transition: all 0.3s; }
+        input[type="number"]:focus { border-color: var(--neon-red); box-shadow: 0 0 10px var(--neon-glow); outline: none; }
+
+        /* Table Optimization */
+        .standing-table th, .standing-table td { padding: 12px 8px; text-align: center; }
+        .standing-table td:first-child, .standing-table th:first-child { text-align: left; padding-left: 20px; }
+        .standing-table td:last-child, .standing-table th:last-child { padding-right: 20px; }
     </style>
 </head>
-<body class="ucl-gradient min-h-screen pb-12">
+<body class="custom-scrollbar">
 
-    <div class="relative overflow-hidden pt-12 pb-12 px-4">
-        <div class="max-w-7xl mx-auto relative z-10 text-center">
-            <i class="fas fa-trophy text-6xl text-cyan-400 mb-6 drop-shadow-[0_0_15px_rgba(0,255,255,0.5)]"></i>
-            <h1 class="text-4xl md:text-5xl font-black italic tracking-tighter mb-2">LEAGUE PHASE SIMULATOR</h1>
-            <p class="text-blue-300 font-bold uppercase tracking-[0.2em] text-xs">Fixed Matchday Fixtures & Standings</p>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-overlay">
+        <div class="relative w-20 h-20">
+            <div class="absolute inset-0 border-4 border-zinc-900 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+        <p class="mt-6 text-[10px] font-black uppercase tracking-[0.5em] text-red-600 animate-pulse">Neon System Online</p>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-login-modal" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-black/90 backdrop-blur-md">
+        <div class="bg-zinc-950 border border-red-900/30 p-8 rounded-[2rem] w-full max-w-sm shadow-[0_0_50px_rgba(255,0,60,0.1)]">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 red-gradient rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_var(--neon-glow)]">
+                    <i class="fas fa-fingerprint text-white text-2xl"></i>
+                </div>
+                <h2 class="text-xl font-black text-white uppercase italic tracking-widest neon-text-glow">Admin Access</h2>
+            </div>
+            <div class="space-y-5">
+                <input type="password" id="adminPasswordInput" class="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-white text-center tracking-[0.8em] focus:border-red-600 outline-none transition-all" placeholder="••••••">
+                <div id="loginError" class="text-red-500 text-[9px] text-center font-bold hidden uppercase tracking-widest">Authentication Failed</div>
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button onclick="closeAdminLogin()" class="bg-zinc-900 text-zinc-500 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:text-white transition">Cancel</button>
+                    <button onclick="attemptLogin()" class="red-gradient text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg">Verify</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <main class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <!-- Sidebar -->
-        <aside class="lg:col-span-3 space-y-6">
-            <div class="glass-card p-6 rounded-3xl sticky top-8 shadow-2xl">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-bold text-blue-400">အသင်းများထည့်ရန်</h2>
-                    <span id="teamCount" class="bg-blue-900 text-blue-300 px-2 py-0.5 rounded text-xs">0</span>
+    <nav class="nav-blur sticky top-0 z-50 px-6 py-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="w-10 h-10 red-gradient rounded-xl flex items-center justify-center shadow-[0_0_15px_var(--neon-glow)] overflow-hidden">
+                    <img id="navLogo" src="https://via.placeholder.com/100?text=LOGO" alt="Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';">
+                    <i id="logoFallback" class="fas fa-bolt text-white hidden"></i>
                 </div>
-                
-                <div class="space-y-4 mb-6">
-                    <input id="teamNameInput" type="text" placeholder="အသင်းအမည်..." 
-                        class="w-full bg-[#121d46] border border-blue-900/50 rounded-xl p-3 text-sm text-white outline-none focus:border-blue-400">
-                    
-                    <button onclick="handleAddTeam()" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-bold transition-all">
-                        အသင်းထည့်မည်
-                    </button>
+                <div class="hidden sm:block">
+                    <h1 class="text-xl font-black tracking-tighter uppercase italic leading-none">
+                        <span class="text-white">THE ONE</span> <span class="text-red-600 neon-text-glow">PRO LEAGUE</span>
+                    </h1>
+                    <p class="text-[8px] font-bold text-zinc-500 uppercase tracking-[0.4em] mt-1">Official Website</p>
                 </div>
-
-                <div id="teamList" class="max-h-[350px] overflow-y-auto space-y-1 pr-1 custom-scrollbar mb-6">
-                    <!-- Teams here -->
-                </div>
-
-                <button id="drawBtn" onclick="startDraw()" class="w-full py-4 rounded-xl font-black text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:brightness-110 shadow-xl">
-                    GENERATE DRAW
-                </button>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <section class="lg:col-span-9 space-y-6">
-            <!-- Tabs -->
-            <div class="flex gap-8 border-b border-blue-900/30 mb-4 px-2">
-                <button onclick="switchTab('fixtures')" id="tab-fixtures" class="pb-3 text-sm font-bold uppercase tracking-wider tab-active transition-all">Fixtures & Results</button>
-                <button onclick="switchTab('standings')" id="tab-standings" class="pb-3 text-sm font-bold uppercase tracking-wider text-slate-500 transition-all">Standings</button>
             </div>
 
-            <!-- Fixtures Tab -->
-            <div id="content-fixtures" class="space-y-6">
-                <div id="emptyState" class="h-64 flex flex-col items-center justify-center bg-[#0a1435]/30 border-2 border-dashed border-blue-900/30 rounded-3xl text-slate-500">
-                    <i class="fas fa-random text-4xl mb-4 opacity-20"></i>
-                    <p>အနည်းဆုံး အသင်း ၂ သင်း (စုံဂဏန်း) ထည့်ပြီး မဲခွဲပါ</p>
-                </div>
+            <div class="flex items-center bg-zinc-950 rounded-2xl p-1 border border-zinc-800">
+                <button onclick="showTab('user-view')" id="btn-user" class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active-nav-btn">Public</button>
+                <button onclick="openAdminLogin()" id="btn-admin" class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-zinc-500 transition-all">Control</button>
+            </div>
+        </div>
+    </nav>
 
-                <div id="matchdayControls" class="hidden flex items-center justify-between bg-blue-900/20 p-4 rounded-2xl border border-blue-500/10">
-                    <button onclick="changeMatchday(-1)" class="p-2 hover:bg-white/10 rounded-full"><i class="fas fa-chevron-left"></i></button>
-                    <div class="text-center">
-                        <span class="text-xs text-blue-400 font-bold uppercase">Matchday</span>
-                        <h2 id="currentMDDisplay" class="text-2xl font-black">1 / 8</h2>
+    <main class="container mx-auto p-4 lg:p-10">
+        <!-- ADMIN PANEL -->
+        <section id="admin-panel" class="tab-content">
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-16">
+                <div class="xl:col-span-2 dark-card p-10 rounded-[2.5rem] neon-border">
+                    <h2 class="text-2xl font-black uppercase italic mb-8 flex items-center neon-text-glow">
+                        <i class="fas fa-terminal text-red-600 mr-4"></i> Tournament Config
+                    </h2>
+                    <div class="space-y-8">
+                        <textarea id="teamInput" rows="6" class="w-full bg-zinc-950 border border-zinc-800 rounded-3xl p-6 text-white focus:border-red-600 outline-none transition-all font-mono text-sm leading-relaxed" placeholder="Enter 48 players..."></textarea>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <button onclick="generateTournamentData()" class="red-gradient text-white font-black py-5 rounded-2xl text-[10px] uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] transition">Initialize GS</button>
+                            <button onclick="advanceToKnockout()" id="knockoutBtn" class="bg-zinc-900 text-zinc-400 font-black py-5 rounded-2xl text-[10px] uppercase tracking-[0.2em] border border-zinc-800 hover:border-red-600 transition">Advance Final</button>
+                            <button onclick="resetTournament()" class="bg-black text-red-600 font-black py-5 rounded-2xl text-[10px] uppercase tracking-[0.2em] border border-red-900/20 hover:bg-red-600 hover:text-white transition">Wipe Cloud</button>
+                        </div>
                     </div>
-                    <button onclick="changeMatchday(1)" class="p-2 hover:bg-white/10 rounded-full"><i class="fas fa-chevron-right"></i></button>
                 </div>
+            </div>
+            <div id="admin-match-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+        </section>
 
-                <div id="fixturesList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Fixtures injected here -->
+        <!-- USER VIEW -->
+        <section id="user-view" class="tab-content active">
+            <div class="flex justify-center mb-16">
+                <div class="inline-flex bg-zinc-950 p-1.5 rounded-3xl border border-zinc-800">
+                    <button onclick="toggleUserSubTab('group')" id="sub-btn-group" class="px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all bg-red-600 text-white shadow-lg shadow-red-600/20">Group Stage</button>
+                    <button onclick="toggleUserSubTab('knockout')" id="sub-btn-knock" class="px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all text-zinc-500">Knockout</button>
                 </div>
             </div>
 
-            <!-- Standings Tab -->
-            <div id="content-standings" class="hidden">
-                <div class="glass-card rounded-3xl overflow-hidden overflow-x-auto shadow-2xl border-blue-500/10">
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-blue-900/40 text-blue-300 text-[10px] uppercase font-black">
-                            <tr>
-                                <th class="px-4 py-4 w-12 text-center">Pos</th>
-                                <th class="px-4 py-4">Club</th>
-                                <th class="px-4 py-4 text-center">P</th>
-                                <th class="px-4 py-4 text-center">W</th>
-                                <th class="px-4 py-4 text-center">D</th>
-                                <th class="px-4 py-4 text-center">L</th>
-                                <th class="px-4 py-4 text-center">GD</th>
-                                <th class="px-4 py-4 text-center text-white">Pts</th>
-                            </tr>
-                        </thead>
-                        <tbody id="standingsBody">
-                            <!-- Standings injected here -->
-                        </tbody>
-                    </table>
+            <div id="group-stage-content">
+                <div class="flex items-center justify-center space-x-3 mb-10 overflow-x-auto no-scrollbar pb-4">
+                    <button onclick="filterUserRound(1)" id="user-r1" class="round-btn active px-10 py-4 rounded-2xl text-[12px] uppercase whitespace-nowrap transition-all">ROUND 1</button>
+                    <button onclick="filterUserRound(2)" id="user-r2" class="round-btn px-10 py-4 rounded-2xl text-[12px] text-zinc-500 uppercase whitespace-nowrap transition-all">ROUND 2</button>
+                    <button onclick="filterUserRound(3)" id="user-r3" class="round-btn px-10 py-4 rounded-2xl text-[12px] text-zinc-500 uppercase whitespace-nowrap transition-all">ROUND 3</button>
                 </div>
+                <div id="user-fixture-list" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mb-20"></div>
+                <!-- Standing Tables with more columns -->
+                <div id="group-container" class="grid grid-cols-1 xl:grid-cols-2 gap-8"></div>
+            </div>
+
+            <div id="knockout-content" class="hidden">
+                <div id="knockout-bracket" class="space-y-32"></div>
             </div>
         </section>
     </main>
 
-    <script>
-        let teams = [
-            'Real Madrid', 'Man City', 'Bayern Munich', 'Liverpool', 'Inter Milan', 
-            'PSG', 'Barcelona', 'Leipzig', 'Dortmund', 'Bayer Leverkusen', 
-            'Atletico Madrid', 'Atalanta', 'Juventus', 'Benfica', 'Arsenal', 
-            'Club Brugge', 'Shakhtar', 'AC Milan', 'Feyenoord', 'Sporting CP', 
-            'PSV', 'Celtic', 'Lille', 'Young Boys', 'Red Star', 'Salzburg', 
-            'Dinamo Zagreb', 'Slovan Bratislava', 'Monaco', 'Sparta Praha', 
-            'Aston Villa', 'Bologna', 'Girona', 'Stuttgart', 'Sturm Graz', 'Brest'
-        ].map((name, id) => ({ id, name }));
-        
-        let fixtures = [];
-        let currentMatchday = 1;
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-        window.onload = () => renderTeams();
+        const firebaseConfig = {
+            apiKey: "AIzaSyBO_TmNXPkY2-vvDtcP8j7YX6HU-8lRpV4",
+            authDomain: "theoneproleague.firebaseapp.com",
+            projectId: "theoneproleague",
+            storageBucket: "theoneproleague.firebasestorage.app",
+            messagingSenderId: "983758717301",
+            appId: "1:983758717301:web:cac06eddc7160a2049133c",
+            measurementId: "G-CDX1FN0CB0"
+        };
 
-        function switchTab(tab) {
-            document.getElementById('content-fixtures').classList.toggle('hidden', tab !== 'fixtures');
-            document.getElementById('content-standings').classList.toggle('hidden', tab !== 'standings');
-            document.getElementById('tab-fixtures').classList.toggle('tab-active', tab === 'fixtures');
-            document.getElementById('tab-standings').classList.toggle('tab-active', tab === 'standings');
-            if(tab === 'standings') updateStandings();
-        }
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const appId = "the-one-neon-v1"; 
 
-        function handleAddTeam() {
-            const name = document.getElementById('teamNameInput').value;
-            if(!name) return;
-            teams.push({ id: Date.now(), name });
-            document.getElementById('teamNameInput').value = '';
-            renderTeams();
-        }
+        let state = { teams: [], matches: [], koMatches: [], isKnockoutStarted: false, currentRound: 1, isAdminAuthenticated: false };
 
-        function removeTeam(id) {
-            teams = teams.filter(t => t.id !== id);
-            renderTeams();
-        }
-
-        function renderTeams() {
-            document.getElementById('teamCount').innerText = teams.length;
-            document.getElementById('teamList').innerHTML = teams.map(t => `
-                <div class="flex justify-between items-center bg-[#121d46]/50 p-2 rounded-lg border border-blue-900/20 mb-1">
-                    <span class="text-xs truncate flex-1 ml-2 font-medium">${t.name}</span>
-                    <button onclick="removeTeam(${t.id})" class="text-slate-500 hover:text-red-400 px-2">×</button>
-                </div>
-            `).join('');
-        }
-
-        function startDraw() {
-            if(teams.length < 2) return alert("အနည်းဆုံး အသင်း ၂ သင်းထည့်ပေးပါ");
-            
-            // Round Robin Algorithm (Circle Method)
-            let tempTeams = [...teams];
-            if (tempTeams.length % 2 !== 0) {
-                tempTeams.push({ id: -1, name: 'BYE' }); // Add ghost team for odd numbers
+        onAuthStateChanged(auth, async (u) => {
+            if (!u) await signInAnonymously(auth);
+            else {
+                onSnapshot(doc(db, 'artifacts', appId, 'public', 'mainData'), (snap) => {
+                    if (snap.exists()) { Object.assign(state, snap.data()); renderAll(); }
+                    document.getElementById('loading-screen').style.display = 'none';
+                });
             }
-            
-            const n = tempTeams.length;
-            const rounds = 8; // We only need 8 rounds as per request
-            fixtures = [];
-            
-            // Shuffle teams for randomness
-            tempTeams.sort(() => Math.random() - 0.5);
+        });
 
-            for (let r = 0; r < rounds; r++) {
-                for (let i = 0; i < n / 2; i++) {
-                    const home = tempTeams[i];
-                    const away = tempTeams[n - 1 - i];
-                    
-                    if (home.id !== -1 && away.id !== -1) {
-                        fixtures.push({
-                            matchId: `${r}-${home.id}-${away.id}`,
-                            home: home.name,
-                            away: away.name,
-                            homeScore: null,
-                            awayScore: null,
-                            matchday: r + 1
-                        });
-                    }
+        window.openAdminLogin = () => { if(state.isAdminAuthenticated) { showTab('admin-panel'); return; } document.getElementById('admin-login-modal').classList.remove('hidden'); };
+        window.closeAdminLogin = () => document.getElementById('admin-login-modal').classList.add('hidden');
+        window.attemptLogin = () => {
+            if(document.getElementById('adminPasswordInput').value === "123456") {
+                state.isAdminAuthenticated = true; closeAdminLogin(); showTab('admin-panel');
+            } else document.getElementById('loginError').classList.remove('hidden');
+        };
+
+        window.showTab = (id) => {
+            if(id === 'admin-panel' && !state.isAdminAuthenticated) { openAdminLogin(); return; }
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            const isA = id === 'admin-panel';
+            document.getElementById('btn-admin').classList.toggle('active-nav-btn', isA);
+            document.getElementById('btn-admin').classList.toggle('text-zinc-500', !isA);
+            document.getElementById('btn-user').classList.toggle('active-nav-btn', !isA);
+            document.getElementById('btn-user').classList.toggle('text-zinc-500', isA);
+        };
+
+        window.generateTournamentData = async () => {
+            const raw = document.getElementById('teamInput').value.split('\n').filter(n => n.trim() !== "");
+            if (raw.length !== 48) return alert("၄၈ ဦး ထည့်သွင်းပေးပါ။");
+            const gNames = "ABCDEFGHIJKL".split("");
+            const teams = raw.sort(() => Math.random() - 0.5).map((n, i) => ({ id: i + 1, name: n.trim(), p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, group: gNames[Math.floor(i / 4)] }));
+            const matches = []; let mId = 1;
+            gNames.forEach(g => {
+                const gt = teams.filter(t => t.group === g);
+                [[0,1],[2,3],[0,2],[1,3],[0,3],[1,2]].forEach((p, idx) => matches.push({id: mId++, round: Math.floor(idx/2)+1, group: g, home: gt[p[0]].id, away: gt[p[1]].id, hS: null, aS: null}));
+            });
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { teams, matches, koMatches: [], isKnockoutStarted: false });
+        };
+
+        window.updateScore = async (id, val, side, isKo) => {
+            const s = val === "" ? null : parseInt(val);
+            let targetM = isKo ? [...state.koMatches] : [...state.matches];
+            const m = targetM.find(x => x.id === id);
+            if(side === 'home') m.hS = s; else m.aS = s;
+            const res = calculateStats(state.teams, state.matches, targetM, isKo);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { teams: res.t, matches: isKo ? state.matches : targetM, koMatches: isKo ? targetM : state.koMatches });
+        };
+
+        function calculateStats(teams, gm, km, isKo) {
+            let t = teams.map(x => ({...x, p:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0}));
+            gm.forEach(m => {
+                if(m.hS !== null && m.aS !== null) {
+                    const h = t.find(x => x.id === m.home), a = t.find(x => x.id === m.away);
+                    h.p++; a.p++; h.gf += m.hS; h.ga += m.aS; a.gf += m.aS; a.ga += m.hS;
+                    if(m.hS > m.aS) { h.w++; h.pts+=3; a.l++; } else if(m.hS < m.aS) { a.w++; a.pts+=3; h.l++; } else { h.d++; a.d++; h.pts+=1; a.pts+=1; }
+                    h.gd = h.gf - h.ga; a.gd = a.gf - a.ga;
                 }
-                // Rotate teams (keeping first team fixed)
-                tempTeams.splice(1, 0, tempTeams.pop());
-            }
-
-            document.getElementById('emptyState').classList.add('hidden');
-            document.getElementById('matchdayControls').classList.remove('hidden');
-            currentMatchday = 1;
-            renderFixtures();
-            switchTab('fixtures');
+            });
+            if(isKo) km.forEach(m => { if(m.hS !== null && m.aS !== null && m.nextMatch) { const winner = m.hS >= m.aS ? m.home : m.away; const nm = km.find(x => x.id === m.nextMatch); if(m.nextPos === 'home') nm.home = winner; else nm.away = winner; } });
+            return { t, km };
         }
 
-        function changeMatchday(val) {
-            currentMatchday = Math.max(1, Math.min(8, currentMatchday + val));
-            renderFixtures();
-        }
+        window.advanceToKnockout = async () => {
+            const gNames = "ABCDEFGHIJKL".split(""); const qual = [];
+            gNames.forEach(g => { const gt = state.teams.filter(t => t.group === g).sort((a,b) => b.pts - a.pts || b.gd - a.gd); qual.push(gt[0], gt[1]); });
+            const thirds = state.teams.filter(t => { const gt = state.teams.filter(x => x.group === t.group).sort((a,b) => b.pts - a.pts || b.gd - a.gd); return gt[2].id === t.id; }).sort((a,b) => b.pts - a.pts || b.gd - a.gd).slice(0, 8);
+            qual.push(...thirds);
+            const ko = [];
+            for(let i=0; i<16; i++) ko.push({ id: 100+i, stage: 'R32', home: qual[i*2].id, away: qual[i*2+1].id, hS: null, aS: null, nextMatch: 200 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
+            for(let i=0; i<8; i++) ko.push({ id: 200+i, stage: 'R16', home: null, away: null, hS: null, aS: null, nextMatch: 300 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
+            for(let i=0; i<4; i++) ko.push({ id: 300+i, stage: 'QF', home: null, away: null, hS: null, aS: null, nextMatch: 400 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
+            for(let i=0; i<2; i++) ko.push({ id: 400+i, stage: 'SF', home: null, away: null, hS: null, aS: null, nextMatch: 500, nextPos: i%2===0?'home':'away'});
+            ko.push({ id: 500, stage: 'Final', home: null, away: null, hS: null, aS: null });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { koMatches: ko, isKnockoutStarted: true });
+            toggleUserSubTab('knockout');
+        };
 
-        function renderFixtures() {
-            document.getElementById('currentMDDisplay').innerText = `${currentMatchday} / 8`;
-            const mdFixtures = fixtures.filter(f => f.matchday === currentMatchday);
-            
-            if(mdFixtures.length === 0) {
-                 document.getElementById('fixturesList').innerHTML = `<div class="col-span-full text-center py-10 opacity-30 italic">No matches scheduled for this matchday.</div>`;
-                 return;
+        window.resetTournament = async () => { if(confirm("Data များအားလုံး ဖျက်သိမ်းမည်မှာ သေချာပါသလား?")) await setDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { teams: [], matches: [], koMatches: [], isKnockoutStarted: false }); };
+
+        function renderAll() {
+            const list = document.getElementById('admin-match-list');
+            if(list) {
+                const data = state.isKnockoutStarted ? state.koMatches : state.matches;
+                list.innerHTML = data.map(m => `
+                    <div class="bg-zinc-950 border border-zinc-900 p-5 rounded-3xl neon-border">
+                        <div class="text-[8px] text-zinc-600 mb-3 font-black uppercase tracking-widest">${m.stage || 'Group ' + m.group}</div>
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex-1 text-right text-[10px] font-bold truncate">${state.teams.find(t=>t.id===m.home)?.name || 'TBD'}</div>
+                            <div class="flex space-x-1">
+                                <input type="number" value="${m.hS ?? ''}" onchange="updateScore(${m.id}, this.value, 'home', ${!!m.stage})" class="w-8 h-10 text-center rounded-xl font-black text-xs">
+                                <input type="number" value="${m.aS ?? ''}" onchange="updateScore(${m.id}, this.value, 'away', ${!!m.stage})" class="w-8 h-10 text-center rounded-xl font-black text-xs">
+                            </div>
+                            <div class="flex-1 text-left text-[10px] font-bold truncate">${state.teams.find(t=>t.id===m.away)?.name || 'TBD'}</div>
+                        </div>
+                    </div>`).join('');
             }
 
-            document.getElementById('fixturesList').innerHTML = mdFixtures.map(f => `
-                <div class="glass-card p-4 rounded-2xl flex items-center justify-between gap-2 border-blue-500/5">
-                    <div class="flex-1 text-right truncate font-semibold text-sm">${f.home}</div>
-                    <div class="flex items-center gap-1 bg-black/40 p-1 rounded-lg">
-                        <input type="number" value="${f.homeScore !== null ? f.homeScore : ''}" 
-                            onchange="updateScore('${f.matchId}', 'home', this.value)"
-                            class="w-8 bg-transparent text-center font-black text-blue-400 outline-none focus:bg-blue-500/20 rounded">
-                        <span class="text-slate-600">-</span>
-                        <input type="number" value="${f.awayScore !== null ? f.awayScore : ''}" 
-                            onchange="updateScore('${f.matchId}', 'away', this.value)"
-                            class="w-8 bg-transparent text-center font-black text-blue-400 outline-none focus:bg-blue-500/20 rounded">
+            const ulist = document.getElementById('user-fixture-list');
+            ulist.innerHTML = state.matches.filter(m => m.round === state.currentRound).map(m => {
+                let hColor = "", aColor = "";
+                if(m.hS !== null && m.aS !== null) {
+                    if(m.hS > m.aS) { hColor = "score-win"; aColor = "score-loss"; }
+                    else if(m.hS < m.aS) { hColor = "score-loss"; aColor = "score-win"; }
+                    else { hColor = "score-draw"; aColor = "score-draw"; }
+                }
+
+                return `
+                <div class="dark-card p-5 rounded-3xl flex items-center justify-between border-l-4 border-red-600">
+                    <div class="text-[9px] text-red-600 font-black w-6">G${m.group}</div>
+                    <div class="flex-1 flex justify-center items-center space-x-3">
+                        <div class="w-[35%] text-right text-[10px] font-bold truncate text-zinc-300">${state.teams.find(t=>t.id===m.home)?.name}</div>
+                        <div class="px-4 py-2 bg-black rounded-xl text-[11px] font-black min-w-[70px] text-center border border-zinc-800 flex justify-between">
+                            <span class="${hColor}">${m.hS ?? ''}</span>
+                            <span class="text-zinc-600 mx-1">${m.hS !== null ? '-' : 'VS'}</span>
+                            <span class="${aColor}">${m.aS ?? ''}</span>
+                        </div>
+                        <div class="w-[35%] text-left text-[10px] font-bold truncate text-zinc-300">${state.teams.find(t=>t.id===m.away)?.name}</div>
                     </div>
-                    <div class="flex-1 text-left truncate font-semibold text-sm">${f.away}</div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
+
+            const gcont = document.getElementById('group-container');
+            gcont.innerHTML = "ABCDEFGHIJKL".split("").map(g => {
+                const gt = state.teams.filter(t => t.group === g).sort((a,b) => b.pts - a.pts || b.gd - a.gd);
+                return `
+                <div class="dark-card rounded-3xl overflow-hidden neon-border">
+                    <div class="bg-zinc-950 px-6 py-4 text-[10px] font-black uppercase tracking-[0.3em] text-red-600 flex justify-between">Group ${g} <i class="fas fa-trophy opacity-20"></i></div>
+                    <div class="overflow-x-auto">
+                        <table class="standing-table w-full text-[10px]">
+                            <tr class="text-zinc-600 text-[8px] uppercase tracking-widest border-b border-zinc-900">
+                                <th class="p-4 text-left">Player</th>
+                                <th class="p-4">P</th>
+                                <th class="p-4">W</th>
+                                <th class="p-4">D</th>
+                                <th class="p-4">L</th>
+                                <th class="p-4">GF</th>
+                                <th class="p-4">GA</th>
+                                <th class="p-4">GD</th>
+                                <th class="p-4">Pts</th>
+                            </tr>
+                            ${gt.map((t,i) => `
+                            <tr class="${i<2?'bg-red-600/5 text-white':'text-zinc-400'} border-b border-zinc-900/50 last:border-0">
+                                <td class="p-4 font-bold truncate max-w-[120px] text-left">${t.name}</td>
+                                <td class="p-4">${t.p}</td>
+                                <td class="p-4 text-green-500/70">${t.w}</td>
+                                <td class="p-4 text-yellow-500/70">${t.d}</td>
+                                <td class="p-4 text-red-500/70">${t.l}</td>
+                                <td class="p-4">${t.gf}</td>
+                                <td class="p-4">${t.ga}</td>
+                                <td class="p-4">${t.gd > 0 ? '+' + t.gd : t.gd}</td>
+                                <td class="p-4 font-black ${i<2?'text-red-500 neon-text-glow':''} text-base">${t.pts}</td>
+                            </tr>`).join('')}
+                        </table>
+                    </div>
+                </div>`;
+            }).join('');
+
+            const bracket = document.getElementById('knockout-bracket');
+            if(!state.isKnockoutStarted) bracket.innerHTML = `<div class="text-center py-20 opacity-20 italic tracking-widest text-xs uppercase">Awaiting Knockout Stage...</div>`;
+            else bracket.innerHTML = ['R32', 'R16', 'QF', 'SF', 'Final'].map(s => {
+                const km = state.koMatches.filter(m => m.stage === s);
+                return `<div class="space-y-8">
+                    <div class="flex items-center space-x-4 mb-10"><div class="h-[2px] flex-1 bg-gradient-to-r from-transparent to-zinc-800"></div><h3 class="text-red-600 font-black uppercase text-xl italic tracking-tighter neon-text-glow">${s}</h3><div class="h-[2px] flex-1 bg-gradient-to-l from-transparent to-zinc-800"></div></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">${km.map(m => {
+                        let hColor = "", aColor = "";
+                        if(m.hS !== null && m.aS !== null) {
+                            if(m.hS > m.aS) { hColor = "score-win"; aColor = "score-loss"; }
+                            else if(m.hS < m.aS) { hColor = "score-loss"; aColor = "score-win"; }
+                            else { hColor = "score-draw"; aColor = "score-draw"; }
+                        }
+                        return `
+                        <div class="dark-card p-6 rounded-[2rem] neon-border">
+                            <div class="flex justify-between mb-2 text-[11px] font-bold text-zinc-300"><span>${state.teams.find(t=>t.id===m.home)?.name || 'TBD'}</span><span class="${hColor} font-black">${m.hS ?? '-'}</span></div>
+                            <div class="flex justify-between text-[11px] font-bold text-zinc-300"><span>${state.teams.find(t=>t.id===m.away)?.name || 'TBD'}</span><span class="${aColor} font-black">${m.aS ?? '-'}</span></div>
+                        </div>`;
+                    }).join('')}
+                    </div>
+                </div>`;
+            }).join('');
         }
 
-        function updateScore(fid, side, val) {
-            const f = fixtures.find(x => x.matchId === fid);
-            if(f) {
-                if(side === 'home') f.homeScore = val === '' ? null : parseInt(val);
-                else f.awayScore = val === '' ? null : parseInt(val);
-            }
-        }
+        window.filterUserRound = (r) => { 
+            state.currentRound = r; 
+            renderAll(); 
+            document.querySelectorAll('.round-btn').forEach((b, i) => {
+                const isActive = i + 1 === r;
+                b.classList.toggle('active', isActive);
+                if (!isActive) b.classList.add('text-zinc-500');
+                else b.classList.remove('text-zinc-500');
+            }); 
+        };
 
-        function updateStandings() {
-            const stats = {};
-            teams.forEach(t => {
-                stats[t.name] = { name: t.name, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0 };
-            });
-
-            fixtures.forEach(f => {
-                if(f.homeScore !== null && f.awayScore !== null) {
-                    const h = stats[f.home];
-                    const a = stats[f.away];
-                    if (h && a) {
-                        h.p++; a.p++;
-                        h.gf += f.homeScore; h.ga += f.awayScore;
-                        a.gf += f.awayScore; a.ga += f.homeScore;
-
-                        if(f.homeScore > f.awayScore) { h.w++; h.pts += 3; a.l++; }
-                        else if(f.homeScore < f.awayScore) { a.w++; a.pts += 3; h.l++; }
-                        else { h.d++; a.d++; h.pts += 1; a.pts += 1; }
-                    }
-                }
-            });
-
-            const sorted = Object.values(stats).sort((a, b) => {
-                if(b.pts !== a.pts) return b.pts - a.pts;
-                const gdA = a.gf - a.ga;
-                const gdB = b.gf - b.ga;
-                if(gdB !== gdA) return gdB - gdA;
-                return b.gf - a.gf;
-            });
-
-            document.getElementById('standingsBody').innerHTML = sorted.map((s, i) => `
-                <tr class="border-b border-blue-900/20 hover:bg-white/5 transition-colors">
-                    <td class="px-4 py-3 text-center">
-                        <span class="w-6 h-6 inline-flex items-center justify-center rounded-full text-[10px] font-black 
-                            ${i < 8 ? 'bg-green-600' : i < 24 ? 'bg-blue-600' : 'bg-slate-800'}">
-                            ${i + 1}
-                        </span>
-                    </td>
-                    <td class="px-4 py-3 font-bold">${s.name}</td>
-                    <td class="px-4 py-3 text-center text-slate-400">${s.p}</td>
-                    <td class="px-4 py-3 text-center">${s.w}</td>
-                    <td class="px-4 py-3 text-center">${s.d}</td>
-                    <td class="px-4 py-3 text-center">${s.l}</td>
-                    <td class="px-4 py-3 text-center font-mono">${s.gf - s.ga}</td>
-                    <td class="px-4 py-3 text-center font-black text-blue-400">${s.pts}</td>
-                </tr>
-            `).join('');
-        }
+        window.toggleUserSubTab = (t) => {
+            const isG = t === 'group';
+            document.getElementById('group-stage-content').classList.toggle('hidden', !isG);
+            document.getElementById('knockout-content').classList.toggle('hidden', isG);
+            document.getElementById('sub-btn-group').className = isG ? "px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all bg-red-600 text-white shadow-lg shadow-red-600/20" : "px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all text-zinc-500";
+            document.getElementById('sub-btn-knock').className = !isG ? "px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all bg-red-600 text-white shadow-lg shadow-red-600/20" : "px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all text-zinc-500";
+        };
     </script>
 </body>
 </html>
