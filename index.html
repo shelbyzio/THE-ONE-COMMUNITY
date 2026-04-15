@@ -3,57 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE ONE PRO LEAGUE - IMAGE UPLOAD ENABLED</title>
+    <title>THE ONE PRO LEAGUE - RANDOMIZED KNOCKOUT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
-        :root { --neon-red: #ff003c; --neon-glow: rgba(255, 0, 60, 0.6); --dark-bg: #050505; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--dark-bg); color: #ffffff; overflow-x: hidden; }
+        
+        :root {
+            --neon-red: #ff003c;
+            --neon-glow: rgba(255, 0, 60, 0.6);
+            --dark-bg: #050505;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--dark-bg); 
+            color: #ffffff;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .neon-text { text-shadow: 0 0 10px var(--neon-glow), 0 0 20px var(--neon-glow); }
         .red-gradient { background: linear-gradient(135deg, #ff003c 0%, #9e0025 100%); }
-        .standing-table { font-size: 10px; width: 100%; border-collapse: separate; border-spacing: 0 4px; }
-        .standing-table td { background: rgba(255,255,255,0.02); padding: 10px 5px; text-align: center; border-radius: 4px; }
-        .score-box { background: #000; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: 900; font-size: 13px; border: 1px solid #222; }
+
+        .standing-table { font-size: 10px; width: 100%; border-collapse: separate; border-spacing: 0 4px; table-layout: fixed; }
+        .standing-table th { color: #666; font-size: 8px; text-transform: uppercase; padding: 8px 2px; text-align: center; }
+        .standing-table td { background: rgba(255,255,255,0.02); padding: 10px 2px; text-align: center; vertical-align: middle; }
+        
+        .col-player { width: 35%; text-align: left !important; padding-left: 8px !important; }
+        .col-stat { width: 8%; }
+        .col-pts { width: 12%; }
+
+        .standing-table tr td:first-child { border-radius: 8px 0 0 8px; }
+        .standing-table tr td:last-child { border-radius: 0 8px 8px 0; }
+
+        .score-box {
+            background: #000; width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; font-weight: 900; font-size: 13px;
+            border: 1px solid #222;
+        }
+
         .score-win { color: #22c55e !important; border-color: rgba(34, 197, 94, 0.4) !important; }
         .score-loss { color: #ef4444 !important; border-color: rgba(239, 68, 68, 0.4) !important; }
         .score-draw { color: #eab308 !important; border-color: rgba(234, 179, 8, 0.4) !important; }
-        .glass-header { background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .active-round-btn { background: var(--neon-red) !important; color: white !important; }
-        .sponsor-slider-container { overflow: hidden; background: #000; border-bottom: 1px solid rgba(255, 255, 255, 0.1); height: 80px; }
-        .sponsor-track { display: flex; width: max-content; animation: scroll 30s linear infinite; }
-        .sponsor-item { width: 160px; height: 80px; flex-shrink: 0; display: block; border-right: 1px solid rgba(255,255,255,0.05); }
-        .sponsor-item img { width: 100%; height: 100%; object-fit: cover; }
-        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .upload-btn { border: 2px dashed rgba(255,255,255,0.1); cursor: pointer; transition: all 0.2s; }
-        .upload-btn:hover { border-color: var(--neon-red); background: rgba(255,0,60,0.05); }
+
+        .glass-header {
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .active-round-btn {
+            background: var(--neon-red) !important;
+            color: white !important;
+            box-shadow: 0 0 10px var(--neon-glow);
+        }
+
+        .loading-overlay { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
+
+        .group-divider-text {
+            color: var(--neon-red);
+            text-shadow: 0 0 8px var(--neon-glow);
+            letter-spacing: 0.2em;
+        }
+
+        .sponsor-slider-container {
+            overflow: hidden;
+            background: #000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            width: 100%;
+        }
+
+        .sponsor-track {
+            display: flex;
+            width: fit-content;
+            animation: scroll 20s linear infinite;
+        }
+
+        .sponsor-item {
+            width: 160px;
+            height: 80px;
+            flex-shrink: 0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            display: block;
+        }
+
+        .sponsor-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-960px); } 
+        }
+
+        /* Image Picker Styles */
+        .img-preview-box {
+            width: 100%;
+            height: 100px;
+            background: #111;
+            border-radius: 12px;
+            border: 2px dashed #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .img-preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0;
+            display: none;
+        }
+        .img-preview-box.has-img img { display: block; }
+        .img-preview-box.has-img i { opacity: 0; }
     </style>
 </head>
 <body class="no-scrollbar pb-10">
 
-    <div id="loading-screen" class="fixed inset-0 bg-black z-[2000] flex items-center justify-center">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-overlay">
         <div class="flex flex-col items-center">
-            <div class="w-10 h-10 border-2 border-t-red-600 rounded-full animate-spin"></div>
-            <p class="text-[10px] uppercase font-black tracking-widest mt-4 text-zinc-500">Syncing Data...</p>
+            <div class="w-10 h-10 border-2 border-zinc-900 border-t-red-600 rounded-full animate-spin"></div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="admin-login-modal" class="fixed inset-0 z-[1000] flex items-center justify-center hidden bg-black/95 p-6">
+        <div class="bg-zinc-900 w-full max-w-xs rounded-[2rem] p-8 border border-white/5">
+            <h2 class="text-center font-black uppercase text-xs tracking-widest mb-6">Admin Verification</h2>
+            <input type="password" id="adminPasswordInput" class="w-full bg-black border border-zinc-800 rounded-xl p-4 text-center tracking-[1em] mb-4 outline-none focus:border-red-600" placeholder="••••">
+            <button onclick="attemptLogin()" class="w-full red-gradient rounded-xl p-4 font-black uppercase text-[10px]">Access Panel</button>
+            <button onclick="closeAdminLogin()" class="w-full mt-2 p-2 text-zinc-600 text-[9px] font-bold uppercase">Back</button>
         </div>
     </div>
 
     <header class="glass-header sticky top-0 z-50 px-5 py-4">
         <div class="flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 red-gradient rounded-lg flex items-center justify-center"><i class="fas fa-trophy text-white text-[10px]"></i></div>
-                <h1 class="text-sm font-black italic uppercase">THE ONE <span class="text-red-600">PRO LEAGUE</span></h1>
+                <div class="w-8 h-8 red-gradient rounded-lg flex items-center justify-center">
+                    <i class="fas fa-trophy text-white text-[10px]"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-black italic uppercase leading-none tracking-tight">THE ONE <span class="text-red-600">PRO LEAGUE</span></h1>
+                    <p class="text-[7px] text-zinc-500 font-bold tracking-[0.2em] uppercase">Official Website</p>
+                </div>
             </div>
-            <div class="flex bg-zinc-900 p-1 rounded-xl">
-                <button onclick="showTab('user-view')" id="btn-user" class="px-4 py-2 rounded-lg text-[9px] font-black uppercase bg-red-600">View</button>
+            <div class="flex bg-zinc-900 p-1 rounded-xl border border-zinc-800">
+                <button onclick="showTab('user-view')" id="btn-user" class="px-4 py-2 rounded-lg text-[9px] font-black uppercase bg-red-600 text-white">View</button>
                 <button onclick="openAdminLogin()" id="btn-admin" class="px-4 py-2 rounded-lg text-[9px] font-black uppercase text-zinc-500">Admin</button>
             </div>
         </div>
     </header>
 
+    <!-- Sponsor Slider -->
     <div class="sponsor-slider-container">
         <div id="sponsor-track-list" class="sponsor-track"></div>
     </div>
@@ -61,21 +188,24 @@
     <main class="p-4">
         <!-- Admin Panel -->
         <section id="admin-panel" class="tab-content space-y-6">
+            <!-- Sponsor Management -->
             <div class="bg-zinc-900/50 rounded-3xl p-6 border border-white/5">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-[10px] font-black text-red-600 uppercase">Sponsor Editor</h3>
-                    <span id="upload-status" class="text-[8px] text-zinc-500 italic uppercase">Ready</span>
+                    <h3 class="text-[10px] font-black uppercase text-red-600 tracking-widest">Sponsor Images</h3>
+                    <span class="text-[8px] text-zinc-500">Click camera to pick</span>
                 </div>
-                <div id="admin-sponsor-config" class="grid grid-cols-2 gap-3"></div>
-                <p class="text-[8px] text-zinc-500 mt-3">* Click on a box to change image using Camera/Gallery</p>
+                <div id="admin-sponsor-config" class="grid grid-cols-2 gap-4">
+                    <!-- Dynamic Sponsor Inputs -->
+                </div>
+                <button id="save-sponsors-btn" onclick="updateSponsors()" class="w-full mt-6 red-gradient p-4 rounded-xl text-[9px] font-black uppercase shadow-lg shadow-red-600/20">Save All Changes</button>
             </div>
 
             <div class="bg-zinc-900/50 rounded-3xl p-6 border border-white/5">
-                <h3 class="text-[10px] font-black text-red-600 mb-4 uppercase">Team Entry (48 Players)</h3>
-                <textarea id="teamInput" rows="4" class="w-full bg-black border border-zinc-800 rounded-2xl p-4 text-xs text-white mb-4 outline-none placeholder-zinc-700" placeholder="Player 1&#10;Player 2..."></textarea>
+                <h3 class="text-[10px] font-black uppercase text-red-600 mb-4 tracking-widest">Tournament Setup</h3>
+                <textarea id="teamInput" rows="4" class="w-full bg-black border border-zinc-800 rounded-2xl p-4 text-xs text-white mb-4 outline-none" placeholder="Paste 48 players names..."></textarea>
                 <div class="grid grid-cols-2 gap-2">
-                    <button onclick="generateTournamentData()" class="bg-zinc-800 p-4 rounded-xl text-[9px] font-black uppercase">Reset & Create Groups</button>
-                    <button id="admin-ko-btn" onclick="advanceToKnockout()" class="bg-zinc-800 p-4 rounded-xl text-[9px] font-black uppercase opacity-50" disabled>Start Knockout</button>
+                    <button onclick="generateTournamentData()" class="red-gradient p-4 rounded-xl text-[9px] font-black uppercase">Create Groups</button>
+                    <button id="admin-ko-btn" onclick="advanceToKnockout()" class="bg-zinc-800 p-4 rounded-xl text-[9px] font-black uppercase opacity-50 cursor-not-allowed" disabled>Start Knockout</button>
                 </div>
             </div>
             <div id="admin-match-list" class="space-y-2 pb-10"></div>
@@ -90,9 +220,9 @@
 
             <div id="group-stage-content">
                 <div class="flex space-x-2 overflow-x-auto no-scrollbar mb-6 pb-2">
-                    <button onclick="filterRound(1)" id="rd-1" class="flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 active-round-btn">Round 1</button>
-                    <button onclick="filterRound(2)" id="rd-2" class="flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 text-zinc-500">Round 2</button>
-                    <button onclick="filterRound(3)" id="rd-3" class="flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 text-zinc-500">Round 3</button>
+                    <button onclick="filterRound(1)" id="rd-1" class="flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 border border-white/5 active-round-btn">Round 1</button>
+                    <button onclick="filterRound(2)" id="rd-2" class="flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 border border-white/5 text-zinc-500">Round 2</button>
+                    <button onclick="filterRound(3)" id="rd-3" class="flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 border border-white/5 text-zinc-500">Round 3</button>
                 </div>
                 <div id="user-fixture-list" class="space-y-4 mb-10"></div>
                 <div id="group-tables-container" class="space-y-6"></div>
@@ -104,15 +234,9 @@
         </section>
     </main>
 
-    <div id="admin-login-modal" class="fixed inset-0 z-[1000] hidden bg-black/95 flex items-center justify-center p-6">
-        <div class="bg-zinc-900 w-full max-w-xs rounded-[2rem] p-8 border border-white/5">
-            <input type="password" id="adminPasswordInput" class="w-full bg-black border border-zinc-800 rounded-xl p-4 text-center tracking-[1em] mb-4" placeholder="••••">
-            <button onclick="attemptLogin()" class="w-full red-gradient rounded-xl p-4 font-black text-[10px] uppercase">Login</button>
-        </div>
-    </div>
-
-    <!-- Hidden File Input -->
-    <input type="file" id="imageInput" accept="image/*" class="hidden">
+    <footer class="py-10 border-t border-white/5 text-center">
+        <p class="text-[8px] text-zinc-600 font-bold uppercase tracking-[0.3em]">© 2024 THE ONE PRO LEAGUE. ALL RIGHTS RESERVED.</p>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -129,19 +253,17 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const appId = "the-one-neon-v2";
+        const appId = "the-one-neon-v1"; 
 
         let state = { 
-            teams: [], matches: [], koMatches: [], isKnockoutStarted: false, currentRound: 1, isAdminAuthenticated: false,
-            sponsors: [
-                {img: "https://picsum.photos/seed/1/320/160", link: "#"},
-                {img: "https://picsum.photos/seed/2/320/160", link: "#"},
-                {img: "https://picsum.photos/seed/3/320/160", link: "#"},
-                {img: "https://picsum.photos/seed/4/320/160", link: "#"}
-            ]
+            teams: [], 
+            matches: [], 
+            koMatches: [], 
+            sponsors: Array(6).fill({ img: "", link: "https://t.me/apexefb_market" }),
+            isKnockoutStarted: false, 
+            currentRound: 1, 
+            isAdminAuthenticated: false 
         };
-
-        let currentEditingSponsorIndex = null;
 
         onAuthStateChanged(auth, async (u) => {
             if (!u) await signInAnonymously(auth);
@@ -150,211 +272,232 @@
                     if (snap.exists()) { 
                         Object.assign(state, snap.data()); 
                         renderAll(); 
-                        renderSponsorEditor(); 
+                        renderSponsorEditor();
+                    } else {
+                        setDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), state);
                     }
                     document.getElementById('loading-screen').style.display = 'none';
                 });
             }
         });
 
-        // UI & AUTH
+        // Tab Management
+        window.openAdminLogin = () => { if(state.isAdminAuthenticated) { showTab('admin-panel'); return; } document.getElementById('admin-login-modal').classList.remove('hidden'); };
+        window.closeAdminLogin = () => document.getElementById('admin-login-modal').classList.add('hidden');
+        window.attemptLogin = () => {
+            if(document.getElementById('adminPasswordInput').value === "1234") {
+                state.isAdminAuthenticated = true; closeAdminLogin(); showTab('admin-panel');
+            }
+        };
+
         window.showTab = (id) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            const btns = { 'user-view': 'btn-user', 'admin-panel': 'btn-admin' };
-            Object.keys(btns).forEach(k => {
-                const btn = document.getElementById(btns[k]);
-                if (k === id) { btn.classList.add('bg-red-600'); btn.classList.remove('text-zinc-500'); }
-                else { btn.classList.remove('bg-red-600'); btn.classList.add('text-zinc-500'); }
-            });
+            const isA = id === 'admin-panel';
+            document.getElementById('btn-admin').className = isA ? "px-4 py-2 rounded-lg text-[9px] font-black uppercase bg-red-600 text-white" : "px-4 py-2 rounded-lg text-[9px] font-black uppercase text-zinc-500";
+            document.getElementById('btn-user').className = !isA ? "px-4 py-2 rounded-lg text-[9px] font-black uppercase bg-red-600 text-white" : "px-4 py-2 rounded-lg text-[9px] font-black uppercase text-zinc-500";
         };
-        window.openAdminLogin = () => { if(state.isAdminAuthenticated) showTab('admin-panel'); else document.getElementById('admin-login-modal').classList.remove('hidden'); };
-        window.attemptLogin = () => { if(document.getElementById('adminPasswordInput').value === "1234") { state.isAdminAuthenticated = true; document.getElementById('admin-login-modal').classList.add('hidden'); showTab('admin-panel'); } };
 
-        // SPONSOR & IMAGE UPLOAD
+        // Sponsor Management (Image Logic)
         function renderSponsorEditor() {
             const container = document.getElementById('admin-sponsor-config');
             if(!container) return;
             container.innerHTML = state.sponsors.map((s, i) => `
-                <div onclick="triggerImageUpload(${i})" class="upload-btn aspect-video bg-black rounded-xl overflow-hidden relative group">
-                    <img src="${s.img}" class="w-full h-full object-cover opacity-60 group-hover:opacity-40">
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <i class="fas fa-camera text-white/50 text-xl group-hover:text-red-500"></i>
+                <div class="space-y-2">
+                    <div id="preview-box-${i}" onclick="triggerFile(${i})" class="img-preview-box ${s.img ? 'has-img' : ''}">
+                        <i class="fas fa-camera text-zinc-700 text-lg"></i>
+                        <img src="${s.img}" id="img-tag-${i}">
+                        <input type="file" id="file-input-${i}" class="hidden" accept="image/*" onchange="handleImage(this, ${i})">
                     </div>
+                    <input type="text" id="sp-link-${i}" value="${s.link}" placeholder="Link..." class="w-full bg-black border border-zinc-800 rounded-lg p-2 text-[9px] outline-none text-zinc-400">
                 </div>
-            `).join('') + `
-                <div onclick="addNewSponsorSlot()" class="upload-btn aspect-video bg-zinc-900/50 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-plus text-zinc-700"></i>
-                </div>
-            `;
+            `).join('');
         }
 
-        window.triggerImageUpload = (index) => {
-            currentEditingSponsorIndex = index;
-            document.getElementById('imageInput').click();
-        };
+        window.triggerFile = (idx) => document.getElementById(`file-input-${idx}`).click();
 
-        window.addNewSponsorSlot = async () => {
-            const newSponsors = [...state.sponsors, { img: "https://picsum.photos/seed/new/320/160", link: "#" }];
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { sponsors: newSponsors });
-        };
-
-        document.getElementById('imageInput').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file || currentEditingSponsorIndex === null) return;
-
-            const status = document.getElementById('upload-status');
-            status.innerText = "Processing...";
-            status.classList.add('text-yellow-500');
-
+        window.handleImage = (input, idx) => {
+            const file = input.files[0];
+            if (!file) return;
+            
             const reader = new FileReader();
-            reader.onload = async (event) => {
-                const base64 = event.target.result;
-                
-                // Gemini Vision fallback simulation/optimizing image size
-                const img = new Image();
-                img.onload = async () => {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 400;
-                    const scale = MAX_WIDTH / img.width;
-                    canvas.width = MAX_WIDTH;
-                    canvas.height = img.height * scale;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    const optimizedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    
-                    const newSponsors = [...state.sponsors];
-                    newSponsors[currentEditingSponsorIndex].img = optimizedBase64;
-
-                    try {
-                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { sponsors: newSponsors });
-                        status.innerText = "Updated!";
-                        status.classList.replace('text-yellow-500', 'text-green-500');
-                        setTimeout(() => status.innerText = "Ready", 2000);
-                    } catch (err) {
-                        status.innerText = "Error!";
-                        status.classList.replace('text-yellow-500', 'text-red-500');
-                    }
-                };
-                img.src = base64;
+            reader.onload = (e) => {
+                const base64 = e.target.result;
+                const imgTag = document.getElementById(`img-tag-${idx}`);
+                const previewBox = document.getElementById(`preview-box-${idx}`);
+                imgTag.src = base64;
+                previewBox.classList.add('has-img');
+                state.sponsors[idx].img = base64; // Update local state
             };
             reader.readAsDataURL(file);
-        });
+        };
 
-        // TOURNAMENT LOGIC
+        window.updateSponsors = async () => {
+            const btn = document.getElementById('save-sponsors-btn');
+            btn.innerText = "Saving...";
+            btn.disabled = true;
+            
+            const finalSponsors = state.sponsors.map((s, i) => ({
+                img: document.getElementById(`img-tag-${i}`).src.startsWith('data:') ? document.getElementById(`img-tag-${i}`).src : s.img,
+                link: document.getElementById(`sp-link-${i}`).value
+            }));
+
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { sponsors: finalSponsors });
+                btn.innerText = "Saved Successfully!";
+            } catch (err) {
+                btn.innerText = "Error Saving";
+            }
+            setTimeout(() => { btn.innerText = "Save All Changes"; btn.disabled = false; }, 2000);
+        };
+
+        // Tournament Logic
         window.generateTournamentData = async () => {
             const raw = document.getElementById('teamInput').value.split('\n').filter(n => n.trim() !== "");
-            if (raw.length !== 48) {
-                alert("Please enter exactly 48 players (one per line)");
-                return;
-            }
+            if (raw.length !== 48) return;
             const gNames = "ABCDEFGHIJKL".split("");
-            const teams = raw.sort(() => Math.random() - 0.5).map((n, i) => ({ 
-                id: i + 1, name: n.trim(), p:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0, group: gNames[Math.floor(i / 4)] 
-            }));
+            const teams = raw.sort(() => Math.random() - 0.5).map((n, i) => ({ id: i + 1, name: n.trim(), p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, group: gNames[Math.floor(i / 4)] }));
             const matches = []; let mId = 1;
             gNames.forEach(g => {
                 const gt = teams.filter(t => t.group === g);
                 [[0,1],[2,3],[0,2],[1,3],[0,3],[1,2]].forEach((p, idx) => matches.push({id: mId++, round: Math.floor(idx/2)+1, group: g, home: gt[p[0]].id, away: gt[p[1]].id, hS: null, aS: null}));
             });
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { ...state, teams, matches, koMatches: [], isKnockoutStarted: false });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { teams, matches, koMatches: [], isKnockoutStarted: false });
         };
 
         window.updateScore = async (id, val, side, isKo) => {
-            const score = val === "" ? null : parseInt(val);
-            let matchData = isKo ? state.koMatches : state.matches;
-            const m = matchData.find(x => x.id === id);
-            if(side === 'home') m.hS = score; else m.aS = score;
-
+            const s = val === "" ? null : parseInt(val);
+            let targetM = isKo ? [...state.koMatches] : [...state.matches];
+            const m = targetM.find(x => x.id === id);
+            if(side === 'home') m.hS = s; else m.aS = s;
+            
             let t = state.teams.map(x => ({...x, p:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0}));
             state.matches.forEach(match => {
                 if(match.hS !== null && match.aS !== null) {
                     const h = t.find(x => x.id === match.home), a = t.find(x => x.id === match.away);
-                    if(!h || !a) return;
                     h.p++; a.p++; h.gf += match.hS; h.ga += match.aS; a.gf += match.aS; a.ga += match.hS;
                     if(match.hS > match.aS) { h.w++; h.pts+=3; a.l++; } else if(match.hS < match.aS) { a.w++; a.pts+=3; h.l++; } else { h.d++; a.d++; h.pts+=1; a.pts+=1; }
                     h.gd = h.gf - h.ga; a.gd = a.gf - a.ga;
                 }
             });
 
+            if(isKo) {
+                targetM.forEach(m => { 
+                    if(m.hS !== null && m.aS !== null && m.nextMatch) { 
+                        const winner = m.hS >= m.aS ? m.home : m.away; 
+                        const nm = targetM.find(x => x.id === m.nextMatch); 
+                        if(nm) { if(m.nextPos === 'home') nm.home = winner; else nm.away = winner; }
+                    } 
+                });
+            }
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { teams: t, matches: state.matches, koMatches: state.koMatches });
         };
 
-        window.renderAll = () => {
-            const getCls = (s1, s2) => (s1 === null) ? '' : (s1 > s2 ? 'score-win' : (s1 < s2 ? 'score-loss' : 'score-draw'));
-            
-            // Sponsors
-            const track = document.getElementById('sponsor-track-list');
-            if(track && state.sponsors.length > 0) {
-                const html = state.sponsors.map(s => `<div class="sponsor-item"><img src="${s.img}"></div>`).join('');
-                track.innerHTML = html + html;
+        window.advanceToKnockout = async () => {
+            const gNames = "ABCDEFGHIJKL".split(""); 
+            const pot1 = []; const pot2 = []; const pot3 = []; 
+            gNames.forEach(g => { 
+                const gt = state.teams.filter(t => t.group === g).sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf); 
+                pot1.push(gt[0]); pot2.push(gt[1]); pot3.push(gt[2]);
+            });
+            const bestThirds = pot3.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf).slice(0, 8);
+            const finalPairings = [];
+            const tempPot1 = [...pot1].sort(() => Math.random() - 0.5);
+            const tempRest = [...pot2, ...bestThirds].sort(() => Math.random() - 0.5);
+            for(let i=0; i<16; i++) {
+                let home = tempPot1.length > 0 ? tempPot1.pop() : tempRest.pop();
+                let awayIndex = tempRest.findIndex(t => t.group !== home.group);
+                if (awayIndex === -1) awayIndex = 0; 
+                let away = tempRest.splice(awayIndex, 1)[0];
+                finalPairings.push({ home: home.id, away: away.id });
             }
-
-            // Fixtures (USER VIEW)
-            const fixList = document.getElementById('user-fixture-list');
-            if(fixList && state.matches.length > 0) {
-                const roundMatches = state.matches.filter(m => m.round === state.currentRound);
-                fixList.innerHTML = roundMatches.map(m => `
-                    <div class="bg-zinc-900/80 p-4 rounded-2xl border border-white/5 flex items-center justify-between">
-                        <div class="flex-1 text-right text-[11px] font-semibold truncate pr-3">${state.teams.find(t=>t.id===m.home)?.name || '...'}</div>
-                        <div class="flex items-center space-x-1">
-                            <div class="score-box ${getCls(m.hS, m.aS)}">${m.hS ?? ''}</div>
-                            <div class="score-box ${getCls(m.aS, m.hS)}">${m.aS ?? ''}</div>
-                        </div>
-                        <div class="flex-1 text-left text-[11px] font-semibold truncate pl-3">${state.teams.find(t=>t.id===m.away)?.name || '...'}</div>
-                    </div>`).join('');
-            }
-
-            // Tables
-            const tableCont = document.getElementById('group-tables-container');
-            if(tableCont && state.teams.length > 0) {
-                tableCont.innerHTML = "ABCDEFGHIJKL".split("").map(g => {
-                    const gt = state.teams.filter(t => t.group === g).sort((a,b) => b.pts - a.pts || b.gd - a.gd);
-                    return `<div class="bg-zinc-900/40 p-4 rounded-2xl border border-white/5">
-                        <div class="flex justify-between items-center mb-3">
-                            <div class="text-[10px] font-black text-red-600 uppercase tracking-widest">GROUP ${g}</div>
-                        </div>
-                        <table class="standing-table">
-                            <thead><tr class="text-zinc-500 uppercase text-[8px] font-black">
-                                <th class="text-left pl-2">Team</th><th>P</th><th>GD</th><th>PTS</th>
-                            </tr></thead>
-                            <tbody>${gt.map((t,i) => `<tr><td class="text-left pl-2 font-semibold">${t.name}</td><td>${t.p}</td><td>${t.gd}</td><td class="font-black text-red-500">${t.pts}</td></tr>`).join('')}</tbody>
-                        </table>
-                    </div>`;
-                }).join('');
-            }
-
-            // Admin Match List
-            const adminMatchList = document.getElementById('admin-match-list');
-            if(adminMatchList) {
-                const data = state.isKnockoutStarted ? state.koMatches : state.matches;
-                adminMatchList.innerHTML = data.map(m => `
-                    <div class="bg-zinc-950 p-3 rounded-xl flex items-center justify-between border border-white/5">
-                        <span class="w-10 text-[8px] font-black text-zinc-600 uppercase">${m.stage || 'G-'+m.group}</span>
-                        <div class="flex-1 flex items-center justify-center space-x-2">
-                            <span class="text-[10px] font-semibold flex-1 text-right truncate text-zinc-400">${state.teams.find(t=>t.id===m.home)?.name || 'TBD'}</span>
-                            <input type="number" value="${m.hS ?? ''}" onchange="updateScore(${m.id}, this.value, 'home', ${!!m.stage})" class="w-10 h-10 bg-zinc-900 text-center rounded-lg border border-zinc-800 text-xs font-black">
-                            <input type="number" value="${m.aS ?? ''}" onchange="updateScore(${m.id}, this.value, 'away', ${!!m.stage})" class="w-10 h-10 bg-zinc-900 text-center rounded-lg border border-zinc-800 text-xs font-black">
-                            <span class="text-[10px] font-semibold flex-1 text-left truncate text-zinc-400">${state.teams.find(t=>t.id===m.away)?.name || 'TBD'}</span>
-                        </div>
-                    </div>`).join('');
-            }
-
-            document.getElementById('admin-ko-btn').disabled = !state.matches.every(m => m.hS !== null);
-            document.getElementById('user-sub-tabs').classList.toggle('hidden', !state.isKnockoutStarted);
+            finalPairings.sort(() => Math.random() - 0.5);
+            const ko = [];
+            for(let i=0; i<16; i++) ko.push({ id: 100+i, stage: 'R32', home: finalPairings[i].home, away: finalPairings[i].away, hS: null, aS: null, nextMatch: 200 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
+            for(let i=0; i<8; i++) ko.push({ id: 200+i, stage: 'R16', home: null, away: null, hS: null, aS: null, nextMatch: 300 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
+            for(let i=0; i<4; i++) ko.push({ id: 300+i, stage: 'QF', home: null, away: null, hS: null, aS: null, nextMatch: 400 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
+            for(let i=0; i<2; i++) ko.push({ id: 400+i, stage: 'SF', home: null, away: null, hS: null, aS: null, nextMatch: 500, nextPos: i%2===0?'home':'away'});
+            ko.push({ id: 500, stage: 'Final', home: null, away: null, hS: null, aS: null });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { koMatches: ko, isKnockoutStarted: true });
         };
 
-        window.filterRound = (r) => { 
-            state.currentRound = r; 
-            document.querySelectorAll('#rd-1, #rd-2, #rd-3').forEach(b => {
-                b.classList.remove('active-round-btn', 'text-white');
-                b.classList.add('text-zinc-500');
+        function renderAll() {
+            const getResultClass = (s1, s2) => (s1 === null || s2 === null) ? 'text-zinc-500' : (s1 > s2 ? 'score-win' : (s1 < s2 ? 'score-loss' : 'score-draw'));
+            
+            // Sponsor Rendering
+            const sponsorTrack = document.getElementById('sponsor-track-list');
+            if(sponsorTrack && state.sponsors) {
+                const sponsorHtml = state.sponsors.filter(s => s.img).map(s => `
+                    <a href="${s.link}" target="_blank" class="sponsor-item">
+                        <img src="${s.img}">
+                    </a>
+                `).join('');
+                sponsorTrack.innerHTML = sponsorHtml + sponsorHtml; // Duplicate for loop
+            }
+
+            const groupDone = state.matches.length > 0 && state.matches.every(m => m.hS !== null && m.aS !== null);
+            const koBtn = document.getElementById('admin-ko-btn');
+            if(koBtn) {
+                if(groupDone && !state.isKnockoutStarted) { koBtn.classList.remove('opacity-50', 'cursor-not-allowed'); koBtn.classList.add('red-gradient'); koBtn.disabled = false; }
+                else if(state.isKnockoutStarted) { koBtn.innerText = "Knockout Started"; koBtn.disabled = true; koBtn.classList.add('opacity-50'); }
+            }
+            document.getElementById('user-sub-tabs').classList.toggle('hidden', !state.isKnockoutStarted);
+            
+            const adminList = document.getElementById('admin-match-list');
+            if(adminList) {
+                const data = state.isKnockoutStarted ? state.koMatches : state.matches;
+                adminList.innerHTML = data.map(m => `
+                    <div class="bg-zinc-950 p-4 rounded-2xl flex items-center justify-between border border-white/5">
+                        <span class="text-[8px] font-black text-zinc-600 w-8">${m.stage || 'G' + m.group}</span>
+                        <div class="flex-1 flex items-center justify-center space-x-2">
+                            <span class="text-[10px] truncate w-20 text-right">${state.teams.find(t=>t.id===m.home)?.name || 'TBD'}</span>
+                            <input type="number" value="${m.hS ?? ''}" onchange="updateScore(${m.id}, this.value, 'home', ${!!m.stage})" class="w-8 h-8 bg-black border border-zinc-800 rounded text-center text-xs outline-none focus:border-red-600">
+                            <input type="number" value="${m.aS ?? ''}" onchange="updateScore(${m.id}, this.value, 'away', ${!!m.stage})" class="w-8 h-8 bg-black border border-zinc-800 rounded text-center text-xs outline-none focus:border-red-600">
+                            <span class="text-[10px] truncate w-20 text-left">${state.teams.find(t=>t.id===m.away)?.name || 'TBD'}</span>
+                        </div>
+                    </div>`).join('');
+            }
+            const fixtureList = document.getElementById('user-fixture-list');
+            const roundMatches = state.matches.filter(m => m.round === state.currentRound);
+            let fHtml = ""; let lastG = "";
+            roundMatches.sort((a,b)=>a.group.localeCompare(b.group)).forEach(m => {
+                if(m.group !== lastG) { lastG = m.group; fHtml += `<div class="flex items-center space-x-4 py-4"><div class="h-[1px] flex-1 bg-zinc-900"></div><span class="group-divider-text text-[10px] font-black italic">Group ${m.group}</span><div class="h-[1px] flex-1 bg-zinc-900"></div></div>`; }
+                fHtml += `<div class="bg-zinc-900/80 p-4 rounded-2xl border border-white/5 flex items-center justify-between">
+                    <div class="flex-1 text-right text-[11px] truncate pr-3">${state.teams.find(t=>t.id===m.home)?.name}</div>
+                    <div class="flex items-center space-x-1"><div class="score-box ${getResultClass(m.hS, m.aS)}">${m.hS ?? ''}</div><div class="score-box ${getResultClass(m.aS, m.hS)}">${m.aS ?? ''}</div></div>
+                    <div class="flex-1 text-left text-[11px] truncate pl-3">${state.teams.find(t=>t.id===m.away)?.name}</div>
+                </div>`;
             });
-            const activeBtn = document.getElementById('rd-'+r);
-            activeBtn.classList.add('active-round-btn', 'text-white');
-            activeBtn.classList.remove('text-zinc-500');
-            renderAll(); 
+            if(fixtureList) fixtureList.innerHTML = fHtml;
+            const tableCont = document.getElementById('group-tables-container');
+            if(tableCont) {
+                tableCont.innerHTML = "ABCDEFGHIJKL".split("").map(g => {
+                    const gt = state.teams.filter(t => t.group === g).sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+                    return `<div class="bg-zinc-900/40 p-3 rounded-3xl border border-white/5"><div class="text-[10px] font-black text-red-600 uppercase mb-3 px-2">Group ${g}</div><table class="standing-table"><thead><tr><th class="col-player">PLAYER</th><th class="col-stat">P</th><th class="col-stat">GD</th><th class="col-pts">PTS</th></tr></thead><tbody>${gt.map((t,i) => `<tr class="${i<2?'text-white':'text-zinc-500'}"><td class="col-player font-bold truncate">${i+1}. ${t.name}</td><td class="col-stat">${t.p}</td><td class="col-stat ${t.gd>0?'text-green-500':''}">${t.gd}</td><td class="col-pts font-black ${i<2?'text-red-600 neon-text':''}">${t.pts}</td></tr>`).join('')}</tbody></table></div>`;
+                }).join('');
+            }
+            const bracket = document.getElementById('knockout-bracket');
+            if(state.isKnockoutStarted && bracket) {
+                bracket.innerHTML = ['R32', 'R16', 'QF', 'SF', 'Final'].map(s => {
+                    const km = state.koMatches.filter(m => m.stage === s);
+                    return `<div class="space-y-4"><div class="text-[9px] font-black uppercase text-center text-red-600 tracking-[0.5em] mb-4">${s === 'R32' ? 'Round of 32' : (s === 'R16' ? 'Round of 16' : s)}</div><div class="grid grid-cols-1 md:grid-cols-2 gap-2">${km.map(m => {
+                        const h = state.teams.find(t=>t.id===m.home); const a = state.teams.find(t=>t.id===m.away);
+                        return `<div class="bg-zinc-900/60 p-4 rounded-2xl border border-white/5 space-y-2"><div class="flex justify-between items-center"><span class="text-[10px] ${m.hS > m.aS ? 'text-white' : 'text-zinc-500'}">${h?.name || 'TBD'}</span><span class="font-black text-xs ${getResultClass(m.hS, m.aS)}">${m.hS ?? '-'}</span></div><div class="flex justify-between items-center"><span class="text-[10px] ${m.aS > m.hS ? 'text-white' : 'text-zinc-500'}">${a?.name || 'TBD'}</span><span class="font-black text-xs ${getResultClass(m.aS, m.hS)}">${m.aS ?? '-'}</span></div></div>`;
+                    }).join('')}</div></div>`;
+                }).join('');
+            }
+        }
+        window.toggleUserSubTab = (t) => {
+            const isG = t === 'group';
+            document.getElementById('group-stage-content').classList.toggle('hidden', !isG);
+            document.getElementById('knockout-content').classList.toggle('hidden', isG);
+            document.getElementById('sub-btn-group').className = isG ? "flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-red-600" : "flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-zinc-500";
+            document.getElementById('sub-btn-knock').className = !isG ? "flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-red-600" : "flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-zinc-500";
+        };
+        window.filterRound = (r) => {
+            state.currentRound = r;
+            [1,2,3].forEach(i => { const btn = document.getElementById('rd-'+i); if(btn) btn.className = `flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 border border-white/5 ${i === r ? 'active-round-btn' : 'text-zinc-500'}`; });
+            renderAll();
         };
     </script>
 </body>
