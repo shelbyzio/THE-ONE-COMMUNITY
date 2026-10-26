@@ -2,503 +2,826 @@
 <html lang="my">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THE ONE PRO LEAGUE - RANDOMIZED KNOCKOUT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Thadingyut Babe ❤️ - Surprise Gift</title>
+    <!-- Tailwind CSS for rapid responsive utility styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts for Myanmar Text & Elegant Roman Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Sans+Myanmar:wght@400;500;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rosepink: '#FFB6C1',
+                        softcream: '#FFFDD0',
+                        champagne: '#F7E7CE',
+                        goldaccent: '#D4AF37',
+                        deeprose: '#E63946',
+                        warmpink: '#FFF0F5',
+                        darkmagenta: '#4A154B'
+                    },
+                    fontFamily: {
+                        myanmar: ['"Noto Sans Myanmar"', 'sans-serif'],
+                        cursive: ['"Great Vibes"', 'cursive'],
+                        sans: ['"Poppins"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
-        
-        :root {
-            --neon-red: #ff003c;
-            --neon-glow: rgba(255, 0, 60, 0.6);
-            --dark-bg: #050505;
-        }
-
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--dark-bg); 
-            color: #ffffff;
-            -webkit-tap-highlight-color: transparent;
+        body {
+            font-family: 'Noto Sans Myanmar', 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #2D0B22 0%, #4A153A 40%, #1F0818 100%);
+            min-height: 100vh;
+            color: #FFFDD0;
             overflow-x: hidden;
-        }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .neon-text { text-shadow: 0 0 10px var(--neon-glow), 0 0 20px var(--neon-glow); }
-        .red-gradient { background: linear-gradient(135deg, #ff003c 0%, #9e0025 100%); }
-
-        .standing-table { font-size: 10px; width: 100%; border-collapse: separate; border-spacing: 0 4px; table-layout: fixed; }
-        .standing-table th { color: #666; font-size: 8px; text-transform: uppercase; padding: 8px 2px; text-align: center; }
-        .standing-table td { background: rgba(255,255,255,0.02); padding: 10px 2px; text-align: center; vertical-align: middle; }
-        
-        .col-player { width: 35%; text-align: left !important; padding-left: 8px !important; }
-        .col-stat { width: 8%; }
-        .col-pts { width: 12%; }
-
-        .standing-table tr td:first-child { border-radius: 8px 0 0 8px; }
-        .standing-table tr td:last-child { border-radius: 0 8px 8px 0; }
-
-        .score-box {
-            background: #000; width: 32px; height: 32px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 8px; font-weight: 900; font-size: 13px;
-            border: 1px solid #222;
-        }
-
-        .score-win { color: #22c55e !important; border-color: rgba(34, 197, 94, 0.4) !important; }
-        .score-loss { color: #ef4444 !important; border-color: rgba(239, 68, 68, 0.4) !important; }
-        .score-draw { color: #eab308 !important; border-color: rgba(234, 179, 8, 0.4) !important; }
-
-        .glass-header {
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .active-round-btn {
-            background: var(--neon-red) !important;
-            color: white !important;
-            box-shadow: 0 0 10px var(--neon-glow);
-        }
-
-        .loading-overlay { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
-
-        .group-divider-text {
-            color: var(--neon-red);
-            text-shadow: 0 0 8px var(--neon-glow);
-            letter-spacing: 0.2em;
-        }
-
-        .sponsor-slider-container {
-            overflow: hidden;
-            background: #000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
-            width: 100%;
         }
 
-        .sponsor-track {
-            display: flex;
-            width: fit-content;
-            animation: scroll 20s linear infinite;
+        /* Ambient Glow & Sparkle Overlay */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 30%, rgba(255, 182, 193, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            z-index: 1;
         }
 
-        .sponsor-item {
-            width: 160px;
-            height: 80px;
-            flex-shrink: 0;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            cursor: pointer;
-            display: block;
-        }
-
-        .sponsor-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: all 0.3s ease;
-        }
-
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-960px); } 
-        }
-
-        /* Image Picker Styles */
-        .img-preview-box {
-            width: 100%;
-            height: 100px;
-            background: #111;
-            border-radius: 12px;
-            border: 2px dashed #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-        .img-preview-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        /* Thadingyut Glowing Lantern Animation */
+        .lantern {
             position: absolute;
-            inset: 0;
-            display: none;
+            width: 42px;
+            height: 52px;
+            background: radial-gradient(circle, #FFF 10%, #FFD700 40%, #FF4500 90%);
+            border-radius: 50% 50% 40% 40%;
+            box-shadow: 0 0 25px 8px rgba(255, 215, 0, 0.7), inset 0 0 10px rgba(255, 255, 255, 0.8);
+            animation: floatLantern 6s ease-in-out infinite alternate;
+            z-index: 2;
         }
-        .img-preview-box.has-img img { display: block; }
-        .img-preview-box.has-img i { opacity: 0; }
+
+        .lantern::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 14px;
+            background: #D4AF37;
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+        }
+
+        @keyframes floatLantern {
+            0% { transform: translateY(0px) rotate(-3deg); }
+            100% { transform: translateY(-25px) rotate(4deg); }
+        }
+
+        /* Floating Hearts Background */
+        .floating-heart {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.4);
+            font-size: 1.2rem;
+            animation: floatUp 8s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.6) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2) rotate(360deg); opacity: 0; }
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 15px rgba(255, 182, 193, 0.2);
+        }
+
+        /* Gold Gradient Text */
+        .gold-text {
+            background: linear-gradient(135deg, #FFFDD0 0%, #F7E7CE 40%, #D4AF37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Shiny Button Effect */
+        .btn-romantic {
+            background: linear-gradient(135deg, #E63946 0%, #FF6B8B 50%, #D4AF37 100%);
+            background-size: 200% auto;
+            transition: all 0.4s ease;
+            box-shadow: 0 6px 20px rgba(230, 57, 70, 0.4), 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-romantic:hover {
+            background-position: right center;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(230, 57, 70, 0.6), 0 0 20px rgba(212, 175, 55, 0.6);
+        }
+
+        .btn-romantic:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        /* Canvas Wheel Shadows & Pointer */
+        .wheel-container {
+            position: relative;
+            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.4));
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 36px;
+            height: 46px;
+            z-index: 30;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+        }
+
+        /* Modal Blur */
+        .modal-backdrop {
+            background: rgba(15, 5, 12, 0.85);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Smooth Screen Transition */
+        .screen-fade {
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+        }
     </style>
 </head>
-<body class="no-scrollbar pb-10">
+<body class="flex flex-col items-center justify-between min-h-screen p-4 sm:p-6 select-none">
 
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="loading-overlay">
-        <div class="flex flex-col items-center">
-            <div class="w-10 h-10 border-2 border-zinc-900 border-t-red-600 rounded-full animate-spin"></div>
-        </div>
-    </div>
+    <!-- Ambient Glow & Background Layer -->
+    <div class="ambient-glow"></div>
+    <div id="hearts-container"></div>
 
-    <!-- Admin Login Modal -->
-    <div id="admin-login-modal" class="fixed inset-0 z-[1000] flex items-center justify-center hidden bg-black/95 p-6">
-        <div class="bg-zinc-900 w-full max-w-xs rounded-[2rem] p-8 border border-white/5">
-            <h2 class="text-center font-black uppercase text-xs tracking-widest mb-6">Admin Verification</h2>
-            <input type="password" id="adminPasswordInput" class="w-full bg-black border border-zinc-800 rounded-xl p-4 text-center tracking-[1em] mb-4 outline-none focus:border-red-600" placeholder="••••">
-            <button onclick="attemptLogin()" class="w-full red-gradient rounded-xl p-4 font-black uppercase text-[10px]">Access Panel</button>
-            <button onclick="closeAdminLogin()" class="w-full mt-2 p-2 text-zinc-600 text-[9px] font-bold uppercase">Back</button>
-        </div>
-    </div>
+    <!-- Decorative Thadingyut Lanterns -->
+    <div class="lantern top-6 left-6 sm:left-16" style="animation-delay: 0s;"></div>
+    <div class="lantern top-12 right-6 sm:right-16" style="animation-delay: 1.5s;"></div>
+    <div class="lantern top-32 left-1/4 hidden md:block" style="animation-delay: 3s;"></div>
+    <div class="lantern top-28 right-1/4 hidden md:block" style="animation-delay: 4.5s;"></div>
 
-    <header class="glass-header sticky top-0 z-50 px-5 py-4">
-        <div class="flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 red-gradient rounded-lg flex items-center justify-center">
-                    <i class="fas fa-trophy text-white text-[10px]"></i>
-                </div>
-                <div>
-                    <h1 class="text-sm font-black italic uppercase leading-none tracking-tight">THE ONE <span class="text-red-600">PRO LEAGUE</span></h1>
-                    <p class="text-[7px] text-zinc-500 font-bold tracking-[0.2em] uppercase">Official Website</p>
-                </div>
-            </div>
-            <div class="flex bg-zinc-900 p-1 rounded-xl border border-zinc-800">
-                <button onclick="showTab('user-view')" id="btn-user" class="px-4 py-2 rounded-lg text-[9px] font-black uppercase bg-red-600 text-white">View</button>
-                <button onclick="openAdminLogin()" id="btn-admin" class="px-4 py-2 rounded-lg text-[9px] font-black uppercase text-zinc-500">Admin</button>
-            </div>
+    <!-- Header Controls: Sound & Theme Mood -->
+    <header class="w-full max-w-4xl flex justify-between items-center z-20 py-2 px-4">
+        <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-sparkles text-goldaccent animate-pulse text-lg"></i>
+            <span class="font-cursive text-2xl text-rosepink">Thadingyut Festival of Lights</span>
         </div>
+        <!-- Sound Toggle Button -->
+        <button id="soundToggleBtn" onclick="toggleSound()" class="glass-card px-4 py-2 rounded-full flex items-center space-x-2 text-sm text-softcream hover:border-goldaccent transition-all duration-300">
+            <i id="soundIcon" class="fa-solid fa-volume-xmark text-deeprose"></i>
+            <span id="soundText">Sound: Off</span>
+        </button>
     </header>
 
-    <!-- Sponsor Slider -->
-    <div class="sponsor-slider-container">
-        <div id="sponsor-track-list" class="sponsor-track"></div>
-    </div>
+    <!-- MAIN CONTAINER -->
+    <main class="w-full max-w-xl my-auto z-10 flex flex-col items-center justify-center">
 
-    <main class="p-4">
-        <!-- Admin Panel -->
-        <section id="admin-panel" class="tab-content space-y-6">
-            <!-- Sponsor Management -->
-            <div class="bg-zinc-900/50 rounded-3xl p-6 border border-white/5">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-[10px] font-black uppercase text-red-600 tracking-widest">Sponsor Images</h3>
-                    <span class="text-[8px] text-zinc-500">Click camera to pick</span>
-                </div>
-                <div id="admin-sponsor-config" class="grid grid-cols-2 gap-4">
-                    <!-- Dynamic Sponsor Inputs -->
-                </div>
-                <button id="save-sponsors-btn" onclick="updateSponsors()" class="w-full mt-6 red-gradient p-4 rounded-xl text-[9px] font-black uppercase shadow-lg shadow-red-600/20">Save All Changes</button>
+        <!-- SCREEN 1: ROMANTIC WELCOME CARD -->
+        <section id="welcomeScreen" class="w-full glass-card rounded-3xl p-6 sm:p-10 text-center screen-fade my-auto">
+            <div class="inline-block p-4 rounded-full bg-rosepink/10 border border-goldaccent/30 mb-4 animate-bounce">
+                <i class="fa-solid fa-gift text-4xl text-goldaccent"></i>
             </div>
+            
+            <h1 class="font-cursive text-4xl sm:text-4xl font-bold text-rosepink mb-2 drop-shadow-lg">
+                Happy Thadingyut Babe 💗
+            </h1>
 
-            <div class="bg-zinc-900/50 rounded-3xl p-6 border border-white/5">
-                <h3 class="text-[10px] font-black uppercase text-red-600 mb-4 tracking-widest">Tournament Setup</h3>
-                <textarea id="teamInput" rows="4" class="w-full bg-black border border-zinc-800 rounded-2xl p-4 text-xs text-white mb-4 outline-none" placeholder="Paste 48 players names..."></textarea>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="generateTournamentData()" class="red-gradient p-4 rounded-xl text-[9px] font-black uppercase">Create Groups</button>
-                    <button id="admin-ko-btn" onclick="advanceToKnockout()" class="bg-zinc-800 p-4 rounded-xl text-[9px] font-black uppercase opacity-50 cursor-not-allowed" disabled>Start Knockout</button>
-                </div>
-            </div>
-            <div id="admin-match-list" class="space-y-2 pb-10"></div>
+            <br>
+            
+            <h2 class="font-myanmar text-lg sm:text-xl font-semibold text-softcream mb-3 leading-relaxed">
+                ပျော်ရွှင်စရာ သီတင်းကျွတ်လေးတစ်ခု ဖြစ်ပါစေ .. 🎁
+            </h2>
+
+            <br>
+            
+            <p class="font-myanmar text-sm sm:text-base text-champagne/90 mb-8 leading-normal">
+                မုန့်ဖိုးလေးကို ကိုယ်တိုင်လှည့်ပြီး ကံစမ်းနိုင်ပါပီ မမ 💗
+            </p>
+
+            <button onclick="revealSpinSection()" class="btn-romantic font-myanmar font-bold text-white text-lg px-8 py-4 rounded-full w-full sm:w-auto flex items-center justify-center space-x-3 mx-auto">
+                <span>မုန့်ဖိုးလေး ယူနိုင်ပါပီ 💝</span>
+                <i class="fa-solid text-sm"></i>
+            </button>
         </section>
 
-        <!-- User View -->
-        <section id="user-view" class="tab-content active">
-            <div id="user-sub-tabs" class="flex bg-zinc-900 p-1 rounded-2xl border border-zinc-800 mb-6 hidden">
-                <button onclick="toggleUserSubTab('group')" id="sub-btn-group" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-red-600">Group Stage</button>
-                <button onclick="toggleUserSubTab('knockout')" id="sub-btn-knock" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-zinc-500">Knockout</button>
+
+        <!-- SCREEN 2: SPIN WHEEL SECTION (Hidden initially) -->
+        <section id="spinScreen" class="w-full flex flex-col items-center text-center screen-fade hidden">
+            <!-- Dynamic Header Info -->
+            <div class="mb-4">
+                <span class="font-cursive text-3xl text-goldaccent">Make a Wish & Spin! 🌟</span>
+                <p class="font-myanmar text-xs sm:text-sm text-rosepink mt-1">
+                    သီတင်းကျွတ်မှာ ကံအကောင်းဆုံးသူလေး ဖြစ်ပါစေ Babe .... 💖
+                </p>
             </div>
 
-            <div id="group-stage-content">
-                <div class="flex space-x-2 overflow-x-auto no-scrollbar mb-6 pb-2">
-                    <button onclick="filterRound(1)" id="rd-1" class="flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 border border-white/5 active-round-btn">Round 1</button>
-                    <button onclick="filterRound(2)" id="rd-2" class="flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 border border-white/5 text-zinc-500">Round 2</button>
-                    <button onclick="filterRound(3)" id="rd-3" class="flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 border border-white/5 text-zinc-500">Round 3</button>
-                </div>
-                <div id="user-fixture-list" class="space-y-4 mb-10"></div>
-                <div id="group-tables-container" class="space-y-6"></div>
+            <!-- Canvas Wheel Container -->
+            <div class="wheel-container my-4">
+                <!-- Golden Pointer Icon SVG -->
+                <svg class="wheel-pointer" viewBox="0 0 36 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 46L2 14C-2 8 2 0 10 0H26C34 0 38 8 34 14L18 46Z" fill="url(#pointerGold)"/>
+                    <path d="M18 40L6 14C3.5 9.5 6 3 11 3H25C30 3 32.5 9.5 30 14L18 40Z" fill="#FFFDD0"/>
+                    <defs>
+                        <linearGradient id="pointerGold" x1="18" y1="0" x2="18" y2="46" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#FFD700"/>
+                            <stop offset="0.5" stop-color="#D4AF37"/>
+                            <stop offset="1" stop-color="#996515"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+
+                <!-- Responsive Wheel Canvas -->
+                <canvas id="wheelCanvas" width="380" height="380" class="max-w-[320px] max-h-[320px] sm:max-w-[380px] sm:max-h-[380px] rounded-full"></canvas>
             </div>
 
-            <div id="knockout-content" class="hidden">
-                <div id="knockout-bracket" class="space-y-12"></div>
-            </div>
+            <!-- Spin Action Button -->
+            <button id="spinBtn" onclick="spinWheel()" class="btn-romantic font-myanmar font-bold text-white text-lg sm:text-xl px-10 py-4 rounded-full mt-4 flex items-center justify-center space-x-3 w-full sm:w-auto">
+                <i class="fa-solid fa-heart text-goldaccent animate-pulse"></i>
+                <span>SPIN SURPRISE WHEEL</span>
+            </button>
+            <p id="spinNotice" class="font-myanmar text-xs text-champagne/70 mt-3 h-5">
+                
+            </p>
+
+            <!-- Admin Reset Button -->
+            <button onclick="promptResetPassword()" class="mt-4 text-xs text-rosepink/50 hover:text-goldaccent transition-colors flex items-center space-x-1">
+                <i class="fa-solid fa-lock text-[10px]"></i>
+                <span>Reset Spin Limit</span>
+            </button>
         </section>
+
     </main>
 
-    <footer class="py-10 border-t border-white/5 text-center">
-        <p class="text-[8px] text-zinc-600 font-bold uppercase tracking-[0.3em]">© 2024 THE ONE PRO LEAGUE. ALL RIGHTS RESERVED.</p>
+    <!-- WINNING CELEBRATION MODAL POPUP -->
+    <div id="winnerModal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-500">
+        <!-- Confetti Canvas Background -->
+        <canvas id="confettiCanvas" class="absolute inset-0 pointer-events-none z-10"></canvas>
+
+        <div class="glass-card relative z-20 w-full max-w-md rounded-3xl p-6 sm:p-8 text-center border-2 border-goldaccent transform scale-90 transition-transform duration-500" id="modalCard">
+            <!-- Heart Graphic Header -->
+            <div class="w-20 h-20 mx-auto -mt-14 mb-4 rounded-full bg-gradient-to-tr from-deeprose to-goldaccent flex items-center justify-center shadow-xl border-4 border-darkmagenta">
+                <i class="fa-solid fa-gift text-3xl text-white animate-bounce"></i>
+            </div>
+
+            <h3 class="font-cursive text-3xl sm:text-3xl font-bold text-rosepink mb-1">
+                Yayyy! Congratulations, Babe! 💗
+            </h3>
+            
+            <p class="font-myanmar text-xs text-champagne/80 mb-4">
+                
+            </p>
+
+            <!-- Prize Amount Box -->
+            <div class="bg-darkmagenta/60 border border-goldaccent/50 rounded-2xl p-4 my-4 shadow-inner">
+                <span id="prizeDisplay" class="font-bold text-3xl sm:text-4xl text-goldaccent tracking-wide drop-shadow">
+                    100,000 MMK
+                </span>
+            </div>
+
+            <!-- Romantic Burmese Message -->
+            <p class="font-myanmar text-sm text-softcream/90 leading-relaxed my-4 px-2">
+                "သီတင်းကျွတ်မှာလည်း ချစ်တယ် !"
+            </p>
+
+            <!-- Action Button: Claim Gift -->
+            <button onclick="claimGift()" class="btn-romantic font-myanmar font-bold text-white text-base px-8 py-3.5 rounded-full w-full mt-2 flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-hand-holding-heart text-goldaccent"></i>
+                <span>မုန့်ဖိုးလေးထုတ်လို့ရပါပီ</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- FINAL AFFECTIONATE MESSAGE OVERLAY -->
+    <div id="finalMessageModal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-500">
+        <div class="glass-card relative z-20 w-full max-w-md rounded-3xl p-8 text-center border border-rosepink/50">
+            <i class="fa-solid fa-heart text-5xl text-deeprose mb-4 animate-pulse"></i>
+            <h4 class="font-cursive text-3xl text-goldaccent mb-3">Forever Yours !</h4>
+            <p id="finalMessageText" class="font-myanmar text-base text-softcream leading-relaxed mb-6">
+                ပျော်ရွှင်စရာသီတင်းကျွတ်လေး ဖြစ်ပါစေ မမ ... 💓 🪔
+            </p>
+            <button onclick="closeFinalModal()" class="glass-card px-6 py-2.5 rounded-full text-xs text-champagne hover:text-white hover:border-goldaccent transition-all flex items-center justify-center space-x-2 mx-auto">
+                <i class="fa-brands text-sm text-sky-400"></i>
+                <span>မုန့်ဖိုးလေးကို ဒီမှာထုတ်ပါ..</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- RESET PASSWORD MODAL -->
+    <div id="resetModal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-card relative z-20 w-full max-w-sm rounded-3xl p-6 text-center border border-goldaccent/50">
+            <h4 class="font-cursive text-2xl text-goldaccent mb-2">Reset Spin Limit 🔑</h4>
+            <p class="font-myanmar text-xs text-softcream/80 mb-4">
+                ပြန်လည်လှည့်ခွင့်ပြုရန် Password ရိုက်ထည့်ပါ
+            </p>
+            <input type="password" id="resetPasswordInput" placeholder="Enter Password..." class="w-full px-4 py-2 rounded-xl bg-darkmagenta/80 border border-goldaccent/40 text-center text-softcream focus:outline-none focus:border-goldaccent mb-3 text-sm">
+            <p id="resetErrMsg" class="font-myanmar text-xs text-deeprose hidden mb-3">Password မှားယွင်းနေပါသည်။</p>
+            <div class="flex space-x-2">
+                <button onclick="closeResetModal()" class="w-1/2 glass-card py-2 rounded-xl text-xs text-champagne hover:text-white">Cancel</button>
+                <button onclick="verifyResetPassword()" class="w-1/2 btn-romantic py-2 rounded-xl text-xs text-white font-bold">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="w-full max-w-4xl text-center py-4 text-xs font-myanmar text-champagne/60 z-20">
+        နောင်နှစ်တွေမှာလည်း အမြဲအတူရှိသွားပြီး ဒီလိုနေ့ရက်တိုင်းမှာ အနားမှာ ရှိနေချင်ပါတယ် .. 💖
     </footer>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getFirestore, doc, setDoc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ====================================================================
+           1. GLOBAL CONFIGURATION & PRIZE SEGMENTS
+           ==================================================================== */
+        const prizes = [
+            { label: "Next Time", val: 0,      bg: "#FFD1DC", text: "#4A154B", isNextTime: true },
+            { label: "30,000 MMK",   val: 30000,  bg: "#FFF3B0", text: "#4A154B" },
+            { label: "50,000 MMK",   val: 50000,  bg: "#E8AEB7", text: "#4A154B" },
+            { label: "100,000 MMK",   val: 100000,  bg: "#B8E0D2", text: "#4A154B" },
+            { label: "150,000 MMK",  val: 150000, bg: "#D6E2E9", text: "#4A154B" }
+        ];
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBO_TmNXPkY2-vvDtcP8j7YX6HU-8lRpV4",
-            authDomain: "theoneproleague.firebaseapp.com",
-            projectId: "theoneproleague",
-            appId: "1:983758717301:web:cac06eddc7160a2049133c"
+        const numSegments = prizes.length;
+        const segmentAngle = (2 * Math.PI) / numSegments; // 72 degrees per segment in radians
+
+        // Canvas & State Variables
+        let canvas, ctx;
+        let isSpinning = false;
+        let currentRotation = 0; // Cumulative angle in radians
+        let winningIndex = 0;
+        let isAudioMuted = true;
+        let audioCtx = null;
+
+        /* ====================================================================
+           2. INITIALIZATION & CANVAS DRAWING LOGIC
+           ==================================================================== */
+        window.onload = function() {
+            canvas = document.getElementById("wheelCanvas");
+            ctx = canvas.getContext("2d");
+
+            // Setup floating hearts background
+            createFloatingHearts();
+
+            // Draw Initial Wheel
+            drawWheel(0);
+
+            // Check if already spun previously
+            checkHasSpun();
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const appId = "the-one-neon-v1"; 
+        function checkHasSpun() {
+            const hasSpun = localStorage.getItem("thadingyut_has_spun");
+            const spinBtn = document.getElementById("spinBtn");
+            const spinNotice = document.getElementById("spinNotice");
 
-        let state = { 
-            teams: [], 
-            matches: [], 
-            koMatches: [], 
-            sponsors: Array(6).fill({ img: "", link: "https://t.me/apexefb_market" }),
-            isKnockoutStarted: false, 
-            currentRound: 1, 
-            isAdminAuthenticated: false 
-        };
+            if (hasSpun === "true") {
+                spinBtn.disabled = true;
+                spinBtn.classList.add("opacity-50", "cursor-not-allowed");
+                spinNotice.innerText = "";
+            }
+        }
 
-        onAuthStateChanged(auth, async (u) => {
-            if (!u) await signInAnonymously(auth);
-            else {
-                onSnapshot(doc(db, 'artifacts', appId, 'public', 'mainData'), (snap) => {
-                    if (snap.exists()) { 
-                        Object.assign(state, snap.data()); 
-                        renderAll(); 
-                        renderSponsorEditor();
+        // Render Canvas Wheel with exact mathematical segments
+        function drawWheel(rotationAngle) {
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = width / 2 - 12; // Leave margin for outer gold ring
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Save canvas context state for rotation transformation
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(rotationAngle);
+
+            // Draw Segments
+            for (let i = 0; i < numSegments; i++) {
+                const startAngle = i * segmentAngle - Math.PI / 2;
+                const endAngle = startAngle + segmentAngle;
+
+                // Draw Slice
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, radius, startAngle, endAngle);
+                ctx.closePath();
+
+                ctx.fillStyle = prizes[i].bg;
+                ctx.fill();
+
+                // Slice Gold Border
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = "#D4AF37";
+                ctx.stroke();
+
+                // Draw Text & Inner Details
+                ctx.save();
+                ctx.rotate(startAngle + segmentAngle / 2);
+                ctx.textAlign = "right";
+                ctx.textBaseline = "middle";
+                ctx.fillStyle = prizes[i].text;
+                ctx.font = "bold 16px 'Poppins', 'Noto Sans Myanmar', sans-serif";
+                
+                // Position Prize Text inside slice
+                ctx.fillText(prizes[i].label, radius - 25, 0);
+
+                // Add small heart icon next to text inside segment
+                ctx.font = "12px 'Font Awesome 6 Free'";
+                ctx.fillText(" \uf004", radius - 10, 0);
+
+                ctx.restore();
+            }
+
+            ctx.restore(); // Restore angle transform
+
+            // Draw Outer Decorative Gold Ring
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius + 4, 0, 2 * Math.PI);
+            ctx.lineWidth = 8;
+            ctx.strokeStyle = "rgba(212, 175, 55, 0.9)";
+            ctx.stroke();
+
+            // Draw Outer Dots Accent on Rim
+            for (let a = 0; a < 360; a += 15) {
+                const rad = (a * Math.PI) / 180;
+                const dotX = centerX + (radius + 4) * Math.cos(rad);
+                const dotY = centerY + (radius + 4) * Math.sin(rad);
+
+                ctx.beginPath();
+                ctx.arc(dotX, dotY, 2.5, 0, 2 * Math.PI);
+                ctx.fillStyle = "#FFFDD0";
+                ctx.fill();
+            }
+
+            // Draw Center Decorative Knob (Heart Badge)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 38, 0, 2 * Math.PI);
+            ctx.fillStyle = "#4A154B";
+            ctx.fill();
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = "#D4AF37";
+            ctx.stroke();
+
+            // Center Heart Icon
+            ctx.fillStyle = "#FFB6C1";
+            ctx.font = "bold 22px 'Font Awesome 6 Free'";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("\uf004", centerX, centerY + 1);
+        }
+
+        /* ====================================================================
+           3. MATHEMATICALLY ACCURATE SPIN LOGIC
+           ==================================================================== */
+        function spinWheel() {
+            if (isSpinning) return;
+            if (localStorage.getItem("thadingyut_has_spun") === "true") {
+                document.getElementById("spinNotice").innerText = "";
+                return;
+            }
+            isSpinning = true;
+
+            // Enable audio context on click interaction
+            initAudio();
+
+            // Disable Button state during animation
+            const spinBtn = document.getElementById("spinBtn");
+            const spinNotice = document.getElementById("spinNotice");
+            spinBtn.disabled = true;
+            spinBtn.classList.add("opacity-50", "cursor-not-allowed");
+            spinNotice.innerText = "";
+
+            // Allowed Prize Indices: Only index 0 (Next Time), 1 (30,000), 2 (50,000)
+            const allowedIndices = [0, 1, 2];
+            winningIndex = allowedIndices[Math.floor(Math.random() * allowedIndices.length)];
+
+            // If it's NOT Next Time, set the limit in localStorage
+            if (!prizes[winningIndex].isNextTime) {
+                localStorage.setItem("thadingyut_has_spun", "true");
+            }
+
+            // 2. Exact Angle Calculation
+            // Top pointer is located at angle -Math.PI / 2 (or 270 deg)
+            const targetSegmentCenter = winningIndex * segmentAngle + segmentAngle / 2;
+            
+            // To align targetSegmentCenter with top pointer:
+            let targetAngle = (2 * Math.PI) - targetSegmentCenter;
+
+            // Ensure currentRotation continues forward fluidly
+            const currentMod = currentRotation % (2 * Math.PI);
+            const fullRotations = (5 + Math.floor(Math.random() * 3)) * (2 * Math.PI); // 5 to 7 full rotations
+
+            // Total target rotation angle
+            const finalRotation = currentRotation + (2 * Math.PI - currentMod) + targetAngle + fullRotations;
+
+            const duration = 5000; // 5 seconds spin animation duration
+            const startTime = performance.now();
+            let lastTickSegment = -1;
+
+            // Animation Frame Function (Easing)
+            function animateSpin(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                // Cubic Ease Out function for smooth gradual slowdown
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                
+                const angleNow = currentRotation + (finalRotation - currentRotation) * easeOut;
+                drawWheel(angleNow);
+
+                // Calculate current segment passing pointer for audio tick sound
+                const normalizedAngle = (2 * Math.PI - (angleNow % (2 * Math.PI))) % (2 * Math.PI);
+                const currentSegmentPassed = Math.floor(normalizedAngle / segmentAngle);
+
+                if (currentSegmentPassed !== lastTickSegment) {
+                    playTickSound();
+                    lastTickSegment = currentSegmentPassed;
+                }
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateSpin);
+                } else {
+                    // Spin finished
+                    currentRotation = finalRotation;
+                    drawWheel(currentRotation);
+                    isSpinning = false;
+                    
+                    if (prizes[winningIndex].isNextTime) {
+                        // Re-enable spin button and inform user
+                        spinBtn.disabled = false;
+                        spinBtn.classList.remove("opacity-50", "cursor-not-allowed");
+                        spinNotice.innerText = "One More Time Babe! 💖";
                     } else {
-                        setDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), state);
+                        // Show Winner Celebration
+                        setTimeout(showWinnerModal, 400);
                     }
-                    document.getElementById('loading-screen').style.display = 'none';
+                }
+            }
+
+            requestAnimationFrame(animateSpin);
+        }
+
+        /* ====================================================================
+           4. WINNING CELEBRATION & MODAL CONTROLS
+           ==================================================================== */
+        function showWinnerModal() {
+            const prize = prizes[winningIndex];
+            document.getElementById("prizeDisplay").innerText = prize.label;
+
+            const modal = document.getElementById("winnerModal");
+            const modalCard = document.getElementById("modalCard");
+            
+            modal.classList.remove("opacity-0", "pointer-events-none");
+            modalCard.classList.remove("scale-90");
+            modalCard.classList.add("scale-100");
+
+            // Play fanfare melody & start confetti animation
+            playWinSound();
+            startConfetti();
+        }
+
+        function claimGift() {
+            const winnerModal = document.getElementById("winnerModal");
+            const finalModal = document.getElementById("finalMessageModal");
+
+            winnerModal.classList.add("opacity-0", "pointer-events-none");
+            
+            setTimeout(() => {
+                finalModal.classList.remove("opacity-0", "pointer-events-none");
+            }, 300);
+        }
+
+        function closeFinalModal() {
+            const finalModal = document.getElementById("finalMessageModal");
+            finalModal.classList.add("opacity-0", "pointer-events-none");
+
+            // Notice text stays as completed
+            const spinNotice = document.getElementById("spinNotice");
+            spinNotice.innerText = "";
+
+            // Redirect to Telegram username link in a new tab
+            window.open("https://t.me/Profit_Zio", "_blank");
+        }
+
+        /* ====================================================================
+           PASSWORD RESET FUNCTIONS
+           ==================================================================== */
+        function promptResetPassword() {
+            const resetModal = document.getElementById("resetModal");
+            document.getElementById("resetPasswordInput").value = "";
+            document.getElementById("resetErrMsg").classList.add("hidden");
+            resetModal.classList.remove("opacity-0", "pointer-events-none");
+        }
+
+        function closeResetModal() {
+            const resetModal = document.getElementById("resetModal");
+            resetModal.classList.add("opacity-0", "pointer-events-none");
+        }
+
+        function verifyResetPassword() {
+            const inputPass = document.getElementById("resetPasswordInput").value;
+            if (inputPass === "CoeCoe") {
+                localStorage.removeItem("thadingyut_has_spun");
+                const spinBtn = document.getElementById("spinBtn");
+                const spinNotice = document.getElementById("spinNotice");
+                spinBtn.disabled = false;
+                spinBtn.classList.remove("opacity-50", "cursor-not-allowed");
+                spinNotice.innerText = "";
+                closeResetModal();
+            } else {
+                document.getElementById("resetErrMsg").classList.remove("hidden");
+            }
+        }
+
+        function revealSpinSection() {
+            playTickSound();
+            const welcomeScreen = document.getElementById("welcomeScreen");
+            const spinScreen = document.getElementById("spinScreen");
+
+            welcomeScreen.classList.add("opacity-0", "-translate-y-4");
+            
+            setTimeout(() => {
+                welcomeScreen.classList.add("hidden");
+                spinScreen.classList.remove("hidden");
+                // Trigger reflow for smooth fade-in animation
+                void spinScreen.offsetWidth;
+                spinScreen.classList.remove("opacity-0");
+            }, 500);
+        }
+
+        /* ====================================================================
+           5. AUDIO SYNTHESIZER (Web Audio API - No External Sound URLs Needed)
+           ==================================================================== */
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    audioCtx = new AudioContext();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function toggleSound() {
+            initAudio();
+            isAudioMuted = !isAudioMuted;
+            const icon = document.getElementById("soundIcon");
+            const text = document.getElementById("soundText");
+
+            if (isAudioMuted) {
+                icon.className = "fa-solid fa-volume-xmark text-deeprose";
+                text.innerText = "Sound: Off";
+            } else {
+                icon.className = "fa-solid fa-volume-high text-goldaccent";
+                text.innerText = "Sound: On";
+                playTickSound();
+            }
+        }
+
+        function playTickSound() {
+            if (isAudioMuted || !audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.04);
+                
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.04);
+            } catch (e) { console.error(e); }
+        }
+
+        function playWinSound() {
+            if (isAudioMuted || !audioCtx) return;
+            try {
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, index) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.value = freq;
+
+                    const startTime = audioCtx.currentTime + index * 0.12;
+                    gain.gain.setValueAtTime(0.2, startTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.4);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start(startTime);
+                    osc.stop(startTime + 0.4);
                 });
+            } catch (e) { console.error(e); }
+        }
+
+        /* ====================================================================
+           6. VISUAL EFFECTS: FLOATING HEARTS & CONFETTI ENGINE
+           ==================================================================== */
+        function createFloatingHearts() {
+            const container = document.getElementById("hearts-container");
+            const heartIcons = ["❤️", "💖", "💗", "✨", "🌸"];
+
+            for (let i = 0; i < 18; i++) {
+                const heart = document.createElement("div");
+                heart.className = "floating-heart";
+                heart.innerText = heartIcons[Math.floor(Math.random() * heartIcons.length)];
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = (6 + Math.random() * 6) + "s";
+                heart.style.animationDelay = (Math.random() * 5) + "s";
+                container.appendChild(heart);
+            }
+        }
+
+        // Lightweight Canvas Confetti Generator
+        function startConfetti() {
+            const confettiCanvas = document.getElementById("confettiCanvas");
+            const cCtx = confettiCanvas.getContext("2d");
+            
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+
+            const particles = [];
+            const particleCount = 70;
+            const colors = ["#FFB6C1", "#FFFDD0", "#D4AF37", "#FF6B8B", "#E63946"];
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * confettiCanvas.width,
+                    y: Math.random() * confettiCanvas.height - confettiCanvas.height,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speedY: Math.random() * 3 + 2,
+                    speedX: Math.random() * 2 - 1,
+                    rotation: Math.random() * 360,
+                    rotSpeed: Math.random() * 6 - 3
+                });
+            }
+
+            let confettiAnimationId;
+            const startTime = performance.now();
+
+            function renderConfetti(now) {
+                cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+                
+                particles.forEach(p => {
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+                    p.rotation += p.rotSpeed;
+
+                    cCtx.save();
+                    cCtx.translate(p.x, p.y);
+                    cCtx.rotate((p.rotation * Math.PI) / 180);
+                    cCtx.fillStyle = p.color;
+                    cCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    cCtx.restore();
+                });
+
+                if (now - startTime < 4500) {
+                    confettiAnimationId = requestAnimationFrame(renderConfetti);
+                } else {
+                    cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+                    cancelAnimationFrame(confettiAnimationId);
+                }
+            }
+
+            requestAnimationFrame(renderConfetti);
+        }
+
+        // Handle Responsive Resize
+        window.addEventListener('resize', () => {
+            const confettiCanvas = document.getElementById("confettiCanvas");
+            if (confettiCanvas) {
+                confettiCanvas.width = window.innerWidth;
+                confettiCanvas.height = window.innerHeight;
             }
         });
-
-        // Tab Management
-        window.openAdminLogin = () => { if(state.isAdminAuthenticated) { showTab('admin-panel'); return; } document.getElementById('admin-login-modal').classList.remove('hidden'); };
-        window.closeAdminLogin = () => document.getElementById('admin-login-modal').classList.add('hidden');
-        window.attemptLogin = () => {
-            if(document.getElementById('adminPasswordInput').value === "1234") {
-                state.isAdminAuthenticated = true; closeAdminLogin(); showTab('admin-panel');
-            }
-        };
-
-        window.showTab = (id) => {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            const isA = id === 'admin-panel';
-            document.getElementById('btn-admin').className = isA ? "px-4 py-2 rounded-lg text-[9px] font-black uppercase bg-red-600 text-white" : "px-4 py-2 rounded-lg text-[9px] font-black uppercase text-zinc-500";
-            document.getElementById('btn-user').className = !isA ? "px-4 py-2 rounded-lg text-[9px] font-black uppercase bg-red-600 text-white" : "px-4 py-2 rounded-lg text-[9px] font-black uppercase text-zinc-500";
-        };
-
-        // Sponsor Management (Image Logic)
-        function renderSponsorEditor() {
-            const container = document.getElementById('admin-sponsor-config');
-            if(!container) return;
-            container.innerHTML = state.sponsors.map((s, i) => `
-                <div class="space-y-2">
-                    <div id="preview-box-${i}" onclick="triggerFile(${i})" class="img-preview-box ${s.img ? 'has-img' : ''}">
-                        <i class="fas fa-camera text-zinc-700 text-lg"></i>
-                        <img src="${s.img}" id="img-tag-${i}">
-                        <input type="file" id="file-input-${i}" class="hidden" accept="image/*" onchange="handleImage(this, ${i})">
-                    </div>
-                    <input type="text" id="sp-link-${i}" value="${s.link}" placeholder="Link..." class="w-full bg-black border border-zinc-800 rounded-lg p-2 text-[9px] outline-none text-zinc-400">
-                </div>
-            `).join('');
-        }
-
-        window.triggerFile = (idx) => document.getElementById(`file-input-${idx}`).click();
-
-        window.handleImage = (input, idx) => {
-            const file = input.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const base64 = e.target.result;
-                const imgTag = document.getElementById(`img-tag-${idx}`);
-                const previewBox = document.getElementById(`preview-box-${idx}`);
-                imgTag.src = base64;
-                previewBox.classList.add('has-img');
-                state.sponsors[idx].img = base64; // Update local state
-            };
-            reader.readAsDataURL(file);
-        };
-
-        window.updateSponsors = async () => {
-            const btn = document.getElementById('save-sponsors-btn');
-            btn.innerText = "Saving...";
-            btn.disabled = true;
-            
-            const finalSponsors = state.sponsors.map((s, i) => ({
-                img: document.getElementById(`img-tag-${i}`).src.startsWith('data:') ? document.getElementById(`img-tag-${i}`).src : s.img,
-                link: document.getElementById(`sp-link-${i}`).value
-            }));
-
-            try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { sponsors: finalSponsors });
-                btn.innerText = "Saved Successfully!";
-            } catch (err) {
-                btn.innerText = "Error Saving";
-            }
-            setTimeout(() => { btn.innerText = "Save All Changes"; btn.disabled = false; }, 2000);
-        };
-
-        // Tournament Logic
-        window.generateTournamentData = async () => {
-            const raw = document.getElementById('teamInput').value.split('\n').filter(n => n.trim() !== "");
-            if (raw.length !== 48) return;
-            const gNames = "ABCDEFGHIJKL".split("");
-            const teams = raw.sort(() => Math.random() - 0.5).map((n, i) => ({ id: i + 1, name: n.trim(), p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, group: gNames[Math.floor(i / 4)] }));
-            const matches = []; let mId = 1;
-            gNames.forEach(g => {
-                const gt = teams.filter(t => t.group === g);
-                [[0,1],[2,3],[0,2],[1,3],[0,3],[1,2]].forEach((p, idx) => matches.push({id: mId++, round: Math.floor(idx/2)+1, group: g, home: gt[p[0]].id, away: gt[p[1]].id, hS: null, aS: null}));
-            });
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { teams, matches, koMatches: [], isKnockoutStarted: false });
-        };
-
-        window.updateScore = async (id, val, side, isKo) => {
-            const s = val === "" ? null : parseInt(val);
-            let targetM = isKo ? [...state.koMatches] : [...state.matches];
-            const m = targetM.find(x => x.id === id);
-            if(side === 'home') m.hS = s; else m.aS = s;
-            
-            let t = state.teams.map(x => ({...x, p:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0}));
-            state.matches.forEach(match => {
-                if(match.hS !== null && match.aS !== null) {
-                    const h = t.find(x => x.id === match.home), a = t.find(x => x.id === match.away);
-                    h.p++; a.p++; h.gf += match.hS; h.ga += match.aS; a.gf += match.aS; a.ga += match.hS;
-                    if(match.hS > match.aS) { h.w++; h.pts+=3; a.l++; } else if(match.hS < match.aS) { a.w++; a.pts+=3; h.l++; } else { h.d++; a.d++; h.pts+=1; a.pts+=1; }
-                    h.gd = h.gf - h.ga; a.gd = a.gf - a.ga;
-                }
-            });
-
-            if(isKo) {
-                targetM.forEach(m => { 
-                    if(m.hS !== null && m.aS !== null && m.nextMatch) { 
-                        const winner = m.hS >= m.aS ? m.home : m.away; 
-                        const nm = targetM.find(x => x.id === m.nextMatch); 
-                        if(nm) { if(m.nextPos === 'home') nm.home = winner; else nm.away = winner; }
-                    } 
-                });
-            }
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { teams: t, matches: state.matches, koMatches: state.koMatches });
-        };
-
-        window.advanceToKnockout = async () => {
-            const gNames = "ABCDEFGHIJKL".split(""); 
-            const pot1 = []; const pot2 = []; const pot3 = []; 
-            gNames.forEach(g => { 
-                const gt = state.teams.filter(t => t.group === g).sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf); 
-                pot1.push(gt[0]); pot2.push(gt[1]); pot3.push(gt[2]);
-            });
-            const bestThirds = pot3.sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf).slice(0, 8);
-            const finalPairings = [];
-            const tempPot1 = [...pot1].sort(() => Math.random() - 0.5);
-            const tempRest = [...pot2, ...bestThirds].sort(() => Math.random() - 0.5);
-            for(let i=0; i<16; i++) {
-                let home = tempPot1.length > 0 ? tempPot1.pop() : tempRest.pop();
-                let awayIndex = tempRest.findIndex(t => t.group !== home.group);
-                if (awayIndex === -1) awayIndex = 0; 
-                let away = tempRest.splice(awayIndex, 1)[0];
-                finalPairings.push({ home: home.id, away: away.id });
-            }
-            finalPairings.sort(() => Math.random() - 0.5);
-            const ko = [];
-            for(let i=0; i<16; i++) ko.push({ id: 100+i, stage: 'R32', home: finalPairings[i].home, away: finalPairings[i].away, hS: null, aS: null, nextMatch: 200 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
-            for(let i=0; i<8; i++) ko.push({ id: 200+i, stage: 'R16', home: null, away: null, hS: null, aS: null, nextMatch: 300 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
-            for(let i=0; i<4; i++) ko.push({ id: 300+i, stage: 'QF', home: null, away: null, hS: null, aS: null, nextMatch: 400 + Math.floor(i/2), nextPos: i%2===0?'home':'away'});
-            for(let i=0; i<2; i++) ko.push({ id: 400+i, stage: 'SF', home: null, away: null, hS: null, aS: null, nextMatch: 500, nextPos: i%2===0?'home':'away'});
-            ko.push({ id: 500, stage: 'Final', home: null, away: null, hS: null, aS: null });
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'mainData'), { koMatches: ko, isKnockoutStarted: true });
-        };
-
-        function renderAll() {
-            const getResultClass = (s1, s2) => (s1 === null || s2 === null) ? 'text-zinc-500' : (s1 > s2 ? 'score-win' : (s1 < s2 ? 'score-loss' : 'score-draw'));
-            
-            // Sponsor Rendering
-            const sponsorTrack = document.getElementById('sponsor-track-list');
-            if(sponsorTrack && state.sponsors) {
-                const sponsorHtml = state.sponsors.filter(s => s.img).map(s => `
-                    <a href="${s.link}" target="_blank" class="sponsor-item">
-                        <img src="${s.img}">
-                    </a>
-                `).join('');
-                sponsorTrack.innerHTML = sponsorHtml + sponsorHtml; // Duplicate for loop
-            }
-
-            const groupDone = state.matches.length > 0 && state.matches.every(m => m.hS !== null && m.aS !== null);
-            const koBtn = document.getElementById('admin-ko-btn');
-            if(koBtn) {
-                if(groupDone && !state.isKnockoutStarted) { koBtn.classList.remove('opacity-50', 'cursor-not-allowed'); koBtn.classList.add('red-gradient'); koBtn.disabled = false; }
-                else if(state.isKnockoutStarted) { koBtn.innerText = "Knockout Started"; koBtn.disabled = true; koBtn.classList.add('opacity-50'); }
-            }
-            document.getElementById('user-sub-tabs').classList.toggle('hidden', !state.isKnockoutStarted);
-            
-            const adminList = document.getElementById('admin-match-list');
-            if(adminList) {
-                const data = state.isKnockoutStarted ? state.koMatches : state.matches;
-                adminList.innerHTML = data.map(m => `
-                    <div class="bg-zinc-950 p-4 rounded-2xl flex items-center justify-between border border-white/5">
-                        <span class="text-[8px] font-black text-zinc-600 w-8">${m.stage || 'G' + m.group}</span>
-                        <div class="flex-1 flex items-center justify-center space-x-2">
-                            <span class="text-[10px] truncate w-20 text-right">${state.teams.find(t=>t.id===m.home)?.name || 'TBD'}</span>
-                            <input type="number" value="${m.hS ?? ''}" onchange="updateScore(${m.id}, this.value, 'home', ${!!m.stage})" class="w-8 h-8 bg-black border border-zinc-800 rounded text-center text-xs outline-none focus:border-red-600">
-                            <input type="number" value="${m.aS ?? ''}" onchange="updateScore(${m.id}, this.value, 'away', ${!!m.stage})" class="w-8 h-8 bg-black border border-zinc-800 rounded text-center text-xs outline-none focus:border-red-600">
-                            <span class="text-[10px] truncate w-20 text-left">${state.teams.find(t=>t.id===m.away)?.name || 'TBD'}</span>
-                        </div>
-                    </div>`).join('');
-            }
-            const fixtureList = document.getElementById('user-fixture-list');
-            const roundMatches = state.matches.filter(m => m.round === state.currentRound);
-            let fHtml = ""; let lastG = "";
-            roundMatches.sort((a,b)=>a.group.localeCompare(b.group)).forEach(m => {
-                if(m.group !== lastG) { lastG = m.group; fHtml += `<div class="flex items-center space-x-4 py-4"><div class="h-[1px] flex-1 bg-zinc-900"></div><span class="group-divider-text text-[10px] font-black italic">Group ${m.group}</span><div class="h-[1px] flex-1 bg-zinc-900"></div></div>`; }
-                fHtml += `<div class="bg-zinc-900/80 p-4 rounded-2xl border border-white/5 flex items-center justify-between">
-                    <div class="flex-1 text-right text-[11px] truncate pr-3">${state.teams.find(t=>t.id===m.home)?.name}</div>
-                    <div class="flex items-center space-x-1"><div class="score-box ${getResultClass(m.hS, m.aS)}">${m.hS ?? ''}</div><div class="score-box ${getResultClass(m.aS, m.hS)}">${m.aS ?? ''}</div></div>
-                    <div class="flex-1 text-left text-[11px] truncate pl-3">${state.teams.find(t=>t.id===m.away)?.name}</div>
-                </div>`;
-            });
-            if(fixtureList) fixtureList.innerHTML = fHtml;
-            const tableCont = document.getElementById('group-tables-container');
-            if(tableCont) {
-                tableCont.innerHTML = "ABCDEFGHIJKL".split("").map(g => {
-                    const gt = state.teams.filter(t => t.group === g).sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
-                    return `<div class="bg-zinc-900/40 p-3 rounded-3xl border border-white/5"><div class="text-[10px] font-black text-red-600 uppercase mb-3 px-2">Group ${g}</div><table class="standing-table"><thead><tr><th class="col-player">PLAYER</th><th class="col-stat">P</th><th class="col-stat">GD</th><th class="col-pts">PTS</th></tr></thead><tbody>${gt.map((t,i) => `<tr class="${i<2?'text-white':'text-zinc-500'}"><td class="col-player font-bold truncate">${i+1}. ${t.name}</td><td class="col-stat">${t.p}</td><td class="col-stat ${t.gd>0?'text-green-500':''}">${t.gd}</td><td class="col-pts font-black ${i<2?'text-red-600 neon-text':''}">${t.pts}</td></tr>`).join('')}</tbody></table></div>`;
-                }).join('');
-            }
-            const bracket = document.getElementById('knockout-bracket');
-            if(state.isKnockoutStarted && bracket) {
-                bracket.innerHTML = ['R32', 'R16', 'QF', 'SF', 'Final'].map(s => {
-                    const km = state.koMatches.filter(m => m.stage === s);
-                    return `<div class="space-y-4"><div class="text-[9px] font-black uppercase text-center text-red-600 tracking-[0.5em] mb-4">${s === 'R32' ? 'Round of 32' : (s === 'R16' ? 'Round of 16' : s)}</div><div class="grid grid-cols-1 md:grid-cols-2 gap-2">${km.map(m => {
-                        const h = state.teams.find(t=>t.id===m.home); const a = state.teams.find(t=>t.id===m.away);
-                        return `<div class="bg-zinc-900/60 p-4 rounded-2xl border border-white/5 space-y-2"><div class="flex justify-between items-center"><span class="text-[10px] ${m.hS > m.aS ? 'text-white' : 'text-zinc-500'}">${h?.name || 'TBD'}</span><span class="font-black text-xs ${getResultClass(m.hS, m.aS)}">${m.hS ?? '-'}</span></div><div class="flex justify-between items-center"><span class="text-[10px] ${m.aS > m.hS ? 'text-white' : 'text-zinc-500'}">${a?.name || 'TBD'}</span><span class="font-black text-xs ${getResultClass(m.aS, m.hS)}">${m.aS ?? '-'}</span></div></div>`;
-                    }).join('')}</div></div>`;
-                }).join('');
-            }
-        }
-        window.toggleUserSubTab = (t) => {
-            const isG = t === 'group';
-            document.getElementById('group-stage-content').classList.toggle('hidden', !isG);
-            document.getElementById('knockout-content').classList.toggle('hidden', isG);
-            document.getElementById('sub-btn-group').className = isG ? "flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-red-600" : "flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-zinc-500";
-            document.getElementById('sub-btn-knock').className = !isG ? "flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-red-600" : "flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-zinc-500";
-        };
-        window.filterRound = (r) => {
-            state.currentRound = r;
-            [1,2,3].forEach(i => { const btn = document.getElementById('rd-'+i); if(btn) btn.className = `flex-1 min-w-[100px] py-3 rounded-xl text-[10px] font-black uppercase bg-zinc-900 border border-white/5 ${i === r ? 'active-round-btn' : 'text-zinc-500'}`; });
-            renderAll();
-        };
     </script>
 </body>
 </html>
